@@ -1,25 +1,25 @@
 <!-- ============================================
-  WM Creations - Homepage / Banner Slider
+  WM Creations - Banner Slider (3:1 ratio)
   WordPress Custom HTML block mein paste karein.
 
-  IMAGE SIZE (recommended):
-  - Best: 1200 x 450 px  (widescreen banner)
-  - Sharp/Retina: 1600 x 600 px
-  - Format: JPG or WebP, ~150–300 KB each
-  - Ratio: roughly 8:3 (banner style, category banner jaisa)
+  IMAGE SIZE (3:1 ratio):
+  - Best:        1200 x 400 px
+  - Sharp:       1500 x 500 px
+  - Retina:      1800 x 600 px
+  - Simple:      1000 x 333 px  (min)
+  - Format: JPG / WebP, ~150–350 KB
 
-  Kaise use karein:
-  1) Media Library se images upload karein (1200x450)
+  Use:
+  1) Media Library mein 3:1 images upload karein
   2) Neeche src="..." URLs replace karein
-  3) Links (href) apni category/product pages pe set karein
-  4) Extra slide chahiye to .wm-slide block copy kar ke add karein
+  3) href links set karein
+  4) Extra slide = .wm-slide block copy
 ============================================ -->
 
 <style>
 .wm-slider {
   --wm-blue: #1A3FA0;
   --wm-blue-2: #2B54C4;
-  --wm-soft: #EAF0FA;
   max-width: 1200px;
   margin: 0 auto 28px;
   padding: 0 20px;
@@ -31,7 +31,8 @@
   overflow: hidden;
   background: #F1F5FB;
   box-shadow: 0 10px 28px rgba(26,63,160,0.14);
-  aspect-ratio: 1200 / 450;
+  aspect-ratio: 3 / 1; /* exact 3:1 banner */
+  width: 100%;
 }
 .wm-slides {
   position: relative;
@@ -56,6 +57,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   display: block;
 }
 .wm-slider-btn {
@@ -108,11 +110,12 @@
   .wm-slider { padding: 0 14px; margin-bottom: 18px; }
   .wm-slider-frame {
     border-radius: 14px;
-    aspect-ratio: 1200 / 520; /* mobile pe thoda taller crop */
+    aspect-ratio: 3 / 1; /* mobile pe bhi 3:1 */
   }
   .wm-slider-btn { width: 34px; height: 34px; font-size: 18px; }
   .wm-slider-prev { left: 8px; }
   .wm-slider-next { right: 8px; }
+  .wm-slider-dots { bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .wm-slide { transition: none; }
@@ -122,19 +125,19 @@
 <div class="wm-slider" data-wm-slider data-autoplay="5000">
   <div class="wm-slider-frame">
     <div class="wm-slides">
-      <!-- SLIDE 1: Gallery se image URL yahan paste karein -->
-      <a class="wm-slide is-active" href="https://wmshop.pk/product-category/14-august-tshirts/">
-        <img src="https://wmshop.pk/wp-content/uploads/2026/07/New-Arival-14-august-t-shirt.webp" alt="Kids 14 August TShirt" width="1200" height="450" decoding="async">
+      <!-- SLIDE 1: apni gallery image URL yahan -->
+      <a class="wm-slide is-active" href="https://wmshop.pk/shop/">
+        <img src="https://wmshop.pk/wp-content/uploads/2026/07/New-Arival-14-august-t-shirt.webp" alt="Banner 1" width="1200" height="400" decoding="async">
       </a>
 
       <!-- SLIDE 2 -->
       <a class="wm-slide" href="https://wmshop.pk/product-category/comment-day-t-shirt/">
-        <img src="https://wmshop.pk/wp-content/uploads/2026/07/Quest_Nawabsha_Coment_day_t_shirt_for_students_D1_final.webp" alt="Comment Day T-Shirt" width="1200" height="450" decoding="async">
+        <img src="https://wmshop.pk/wp-content/uploads/2026/07/Quest_Nawabsha_Coment_day_t_shirt_for_students_D1_final.webp" alt="Banner 2" width="1200" height="400" decoding="async">
       </a>
 
       <!-- SLIDE 3 -->
       <a class="wm-slide" href="https://wmshop.pk/product-category/t-shirts/">
-        <img src="https://wmshop.pk/wp-content/uploads/2026/07/t_shirt_catg.webp" alt="T-Shirts" width="1200" height="450" decoding="async">
+        <img src="https://wmshop.pk/wp-content/uploads/2026/07/t_shirt_catg.webp" alt="Banner 3" width="1200" height="400" decoding="async">
       </a>
     </div>
 
@@ -156,6 +159,7 @@
     var i = Math.max(0, slides.findIndex(function (s) { return s.classList.contains("is-active"); }));
     var timer = null;
 
+    dotsWrap.innerHTML = "";
     slides.forEach(function (_, idx) {
       var dot = document.createElement("button");
       dot.type = "button";
