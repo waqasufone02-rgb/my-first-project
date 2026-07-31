@@ -1397,25 +1397,176 @@ function wm_product_page_css() {
             margin-top: 0;
         }
 
-        /* Related Products */
-        .related.products {
+        /* Related Products — professional grid (overrides broken customizer flex) */
+        .related.products,
+        .upsells.products {
             margin-top: 40px;
             padding-top: 30px;
             border-top: 1px solid #EAF0FA;
+            clear: both !important;
+            width: 100% !important;
         }
-        .related.products > h2 {
-            font-size: 20px;
+        .related.products > h2,
+        .upsells.products > h2 {
+            font-size: 22px;
             font-weight: 800;
             color: #1A3FA0;
-            margin: 0 0 20px;
+            margin: 0 0 22px;
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+        body.single-product .related.products ul.products,
+        body.single-product .upsells.products ul.products {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 20px !important;
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            float: none !important;
+        }
+        body.single-product .related.products ul.products::before,
+        body.single-product .related.products ul.products::after,
+        body.single-product .upsells.products ul.products::before,
+        body.single-product .upsells.products ul.products::after {
+            display: none !important;
+            content: none !important;
+        }
+        body.single-product .related.products ul.products li.product,
+        body.single-product .upsells.products ul.products li.product {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            float: none !important;
+            margin: 0 !important;
+            clear: none !important;
+            padding: 0 !important;
+            background: #fff;
+            border: 1px solid #EAF0FA;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26,63,160,0.06);
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            display: flex !important;
+            flex-direction: column !important;
+            box-sizing: border-box !important;
+        }
+        body.single-product .related.products ul.products li.product:hover,
+        body.single-product .upsells.products ul.products li.product:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(26,63,160,0.14);
+            border-color: #4FA8E0;
+        }
+        body.single-product .related.products ul.products li.product a img,
+        body.single-product .upsells.products ul.products li.product a img {
+            width: 100% !important;
+            height: auto !important;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            margin: 0 !important;
+            border-radius: 0 !important;
+        }
+        body.single-product .related.products ul.products li.product .woocommerce-loop-product__title,
+        body.single-product .upsells.products ul.products li.product .woocommerce-loop-product__title {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            color: #1A3FA0 !important;
+            padding: 12px 12px 4px !important;
+            margin: 0 !important;
+            line-height: 1.35 !important;
+            word-break: normal !important;
+            overflow-wrap: anywhere;
+            white-space: normal !important;
+        }
+        body.single-product .related.products ul.products li.product .price,
+        body.single-product .upsells.products ul.products li.product .price {
+            font-size: 15px !important;
+            font-weight: 800 !important;
+            color: #2B54C4 !important;
+            padding: 4px 12px 14px !important;
+            display: block !important;
+            margin: 0 !important;
+        }
+        body.single-product .related.products ul.products li.product .star-rating,
+        body.single-product .upsells.products ul.products li.product .star-rating {
+            margin: 4px auto !important;
+            float: none !important;
+        }
+
+        /* Tabs: desktop pills, mobile dropdown */
+        .wm-tabs-mobile-select {
+            display: none;
+            width: 100%;
+            margin: 0 0 14px;
+            padding: 14px 16px;
+            border: 1.5px solid #DCE5F5;
+            border-radius: 12px;
+            background: #F8FAFD;
+            color: #1A3FA0;
+            font-weight: 700;
+            font-size: 14px;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #1A3FA0 50%), linear-gradient(135deg, #1A3FA0 50%, transparent 50%);
+            background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+        .wm-size-chart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 0;
+            font-size: 14px;
+        }
+        .wm-size-chart-table th,
+        .wm-size-chart-table td {
+            border: 1px solid #EAF0FA;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        .wm-size-chart-table th {
+            background: #F1F5FB;
+            color: #1A3FA0;
+            font-weight: 800;
+        }
+        .wm-size-chart-note {
+            margin: 14px 0 0;
+            font-size: 13px;
+            color: #5A6B8C;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1024px) {
+            body.single-product .related.products ul.products,
+            body.single-product .upsells.products ul.products {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
         }
 
         @media (max-width: 700px) {
             .product_title.entry-title { font-size: 20px; }
             .woocommerce div.product p.price,
             .woocommerce div.product span.price { font-size: 22px; }
-            .woocommerce-tabs ul.tabs li a { padding: 8px 14px; font-size: 12.5px; }
-            .woocommerce-tabs .panel { padding: 16px; font-size: 13px; }
+            .woocommerce-tabs ul.tabs { display: none !important; }
+            .wm-tabs-mobile-select { display: block !important; }
+            .woocommerce-tabs .panel { padding: 16px; font-size: 13px; border-radius: 12px !important; }
+            body.single-product .related.products ul.products,
+            body.single-product .upsells.products ul.products {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 10px !important;
+            }
+            body.single-product .related.products ul.products li.product .woocommerce-loop-product__title,
+            body.single-product .upsells.products ul.products li.product .woocommerce-loop-product__title {
+                font-size: 12px !important;
+                padding: 8px 8px 2px !important;
+            }
+            body.single-product .related.products ul.products li.product .price,
+            body.single-product .upsells.products ul.products li.product .price {
+                font-size: 13px !important;
+                padding: 2px 8px 10px !important;
+            }
         }
     </style>';
 }
@@ -2167,7 +2318,7 @@ function wm_preloader_markup() {
     echo '<div id="wm-preloader">
         <div class="wm-preloader-inner">
             <img src="https://wmshop.pk/wp-content/uploads/2026/07/wm-creations-logo.jpg" alt="WM Creations" class="wm-preloader-logo">
-            <p class="wm-preloader-text">Surprise taiyar ho raha hai, thoda intezar...</p>
+            <p class="wm-preloader-text">WM Creations</p>
         </div>
     </div>';
 }
@@ -2194,24 +2345,26 @@ function wm_preloader_css() {
             text-align: center;
         }
         .wm-preloader-logo {
-            width: 90px;
+            width: 180px;
+            max-width: 46vw;
             height: auto;
             animation: wmPreloaderPulse 1.4s ease-in-out infinite;
         }
         .wm-preloader-text {
-            margin-top: 16px;
-            font-size: 14px;
-            font-weight: 600;
+            margin-top: 18px;
+            font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+            font-size: 22px;
+            font-weight: 800;
             color: #1A3FA0;
-            letter-spacing: 0.2px;
+            letter-spacing: 0.4px;
         }
         @keyframes wmPreloaderPulse {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(0.85); opacity: 0.6; }
+            50% { transform: scale(0.92); opacity: 0.75; }
         }
         @media (max-width: 700px) {
-            .wm-preloader-logo { width: 70px; }
-            .wm-preloader-text { font-size: 12.5px; }
+            .wm-preloader-logo { width: 140px; max-width: 56vw; }
+            .wm-preloader-text { font-size: 18px; margin-top: 14px; }
         }
     </style>';
 }
@@ -2228,6 +2381,182 @@ function wm_preloader_js() {
             }
         });
     </script>';
+}
+
+
+// ============================================================
+// WM Creations - PRODUCT TABS (Size & Measurement)
+// Removes Additional information, adds Size & Measurement.
+// Mobile: dropdown selector. Desktop: normal tabs.
+// ============================================================
+
+add_filter( 'woocommerce_product_tabs', 'wm_replace_additional_info_with_size_tab', 98 );
+function wm_replace_additional_info_with_size_tab( $tabs ) {
+    unset( $tabs['additional_information'] );
+
+    $tabs['size_measurement'] = array(
+        'title'    => 'Size & Measurement',
+        'priority' => 20,
+        'callback' => 'wm_size_measurement_tab_content',
+    );
+
+    return $tabs;
+}
+
+add_action( 'add_meta_boxes', 'wm_add_size_measurement_meta_box' );
+function wm_add_size_measurement_meta_box() {
+    add_meta_box(
+        'wm_size_measurement',
+        'Size & Measurement Tab',
+        'wm_size_measurement_meta_box_html',
+        'product',
+        'normal',
+        'default'
+    );
+}
+
+function wm_size_measurement_meta_box_html( $post ) {
+    $content = get_post_meta( $post->ID, '_wm_size_measurement', true );
+    echo '<p style="margin:0 0 8px;color:#555;">Ye content product page ke <b>Size &amp; Measurement</b> tab mein dikhega. Khali chhoren to default T-shirt size chart use hogi.</p>';
+    wp_editor(
+        $content,
+        'wm_size_measurement_editor',
+        array(
+            'textarea_name' => 'wm_size_measurement',
+            'media_buttons' => true,
+            'textarea_rows' => 10,
+        )
+    );
+}
+
+add_action( 'save_post_product', 'wm_save_size_measurement_meta_box' );
+function wm_save_size_measurement_meta_box( $post_id ) {
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+    if ( isset( $_POST['wm_size_measurement'] ) ) {
+        update_post_meta( $post_id, '_wm_size_measurement', wp_kses_post( wp_unslash( $_POST['wm_size_measurement'] ) ) );
+    }
+}
+
+function wm_size_measurement_tab_content() {
+    global $product;
+    $custom = $product ? get_post_meta( $product->get_id(), '_wm_size_measurement', true ) : '';
+
+    echo '<h2>Size &amp; Measurement</h2>';
+
+    if ( ! empty( $custom ) ) {
+        echo wp_kses_post( wpautop( $custom ) );
+        return;
+    }
+
+    echo '<p>Apna perfect fit choose karne ke liye neeche size chart dekhein. Measurements inches mein hain.</p>';
+    echo '<table class="wm-size-chart-table">
+        <thead>
+            <tr><th>Size</th><th>Chest</th><th>Length</th><th>Sleeve</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Small</td><td>36"</td><td>26"</td><td>7.5"</td></tr>
+            <tr><td>Medium</td><td>38"</td><td>27"</td><td>8"</td></tr>
+            <tr><td>Large</td><td>40"</td><td>28"</td><td>8.5"</td></tr>
+            <tr><td>Extra Large (XL)</td><td>42"</td><td>29"</td><td>9"</td></tr>
+        </tbody>
+    </table>';
+    echo '<p class="wm-size-chart-note">Tip: Agar aap sizes ke beech mein hain to larger size choose karein. Custom print items exchange size policy product page / WhatsApp par confirm karein.</p>';
+}
+
+add_filter( 'woocommerce_output_related_products_args', 'wm_related_products_args' );
+function wm_related_products_args( $args ) {
+    $args['posts_per_page'] = 4;
+    $args['columns']        = 4;
+    return $args;
+}
+
+// Beat Customizer Additional CSS that breaks related product widths
+add_action( 'wp_head', 'wm_related_products_force_css', 999 );
+function wm_related_products_force_css() {
+    if ( ! is_product() ) {
+        return;
+    }
+    echo '<style id="wm-related-products-fix">
+        body.single-product .related.products ul.products,
+        body.single-product .upsells.products ul.products {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 20px !important;
+            width: 100% !important;
+            flex-wrap: unset !important;
+            justify-content: unset !important;
+        }
+        body.single-product .related.products ul.products li.product,
+        body.single-product .upsells.products ul.products li.product {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            flex: none !important;
+            float: none !important;
+        }
+        @media (max-width: 1024px) {
+            body.single-product .related.products ul.products,
+            body.single-product .upsells.products ul.products {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+        }
+        @media (max-width: 700px) {
+            body.single-product .related.products ul.products,
+            body.single-product .upsells.products ul.products {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 10px !important;
+            }
+        }
+    </style>';
+}
+
+add_action( 'wp_footer', 'wm_product_tabs_mobile_dropdown_js' );
+function wm_product_tabs_mobile_dropdown_js() {
+    if ( ! is_product() ) {
+        return;
+    }
+    ?>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var tabsWrap = document.querySelector(".woocommerce-tabs");
+        if (!tabsWrap) return;
+        var tabList = tabsWrap.querySelector("ul.tabs");
+        if (!tabList) return;
+
+        var select = document.createElement("select");
+        select.className = "wm-tabs-mobile-select";
+        select.setAttribute("aria-label", "Product information");
+
+        var links = tabList.querySelectorAll("li a");
+        links.forEach(function (link, index) {
+            var opt = document.createElement("option");
+            opt.value = link.getAttribute("href") || ("#tab-" + index);
+            opt.textContent = (link.textContent || "").trim();
+            if (link.parentElement && link.parentElement.classList.contains("active")) {
+                opt.selected = true;
+            }
+            select.appendChild(opt);
+        });
+
+        tabList.parentNode.insertBefore(select, tabList);
+
+        select.addEventListener("change", function () {
+            var target = select.value;
+            var match = tabList.querySelector('a[href="' + target + '"]');
+            if (match) {
+                match.click();
+            } else if (window.jQuery) {
+                jQuery(tabList).find('a[href="' + target + '"]').trigger("click");
+            }
+        });
+    });
+    </script>
+    <?php
 }
 
 
