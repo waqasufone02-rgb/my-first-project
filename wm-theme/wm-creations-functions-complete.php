@@ -2394,61 +2394,69 @@ function wm_product_redesign_assets() {
             border:1px solid #FFD0A8;
         }
 
-        /* Gallery: rounded main + thumbs BELOW */
-        .woocommerce div.product div.images,
+        /* Gallery: thumbs below + KEEP WooCommerce slider working */
         .woocommerce-product-gallery {
-            display:block !important;
+            opacity: 1 !important;
         }
-        .woocommerce-product-gallery__wrapper,
+        /* DO NOT force width on wrapper — FlexSlider needs auto width to slide */
+        .woocommerce-product-gallery__wrapper {
+            width: auto !important;
+            max-width: none !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            overflow: visible !important;
+            box-shadow: none !important;
+        }
         .woocommerce-product-gallery .flex-viewport {
-            width:100% !important;
-            margin:0 0 12px !important;
-            border-radius:18px !important;
-            overflow:hidden !important;
-            box-shadow:0 10px 28px rgba(26,63,160,0.12) !important;
+            width: 100% !important;
+            margin: 0 0 12px !important;
+            border-radius: 18px !important;
+            overflow: hidden !important;
+            box-shadow: 0 10px 28px rgba(26,63,160,0.12) !important;
         }
-        .woocommerce-product-gallery__image,
+        .woocommerce-product-gallery__image {
+            float: left !important;
+        }
         .woocommerce-product-gallery__image img,
-        .woocommerce div.product div.images img,
         .woocommerce-product-gallery .flex-viewport img {
-            border-radius:18px !important;
+            border-radius: 18px !important;
+            display: block !important;
         }
         .woocommerce-product-gallery ol.flex-control-nav,
         .woocommerce-product-gallery ol.flex-control-thumbs,
         .woocommerce-product-gallery .flex-control-thumbs {
-            display:flex !important;
-            flex-direction:row !important;
-            flex-wrap:wrap !important;
-            width:100% !important;
-            max-width:100% !important;
-            max-height:none !important;
-            overflow:visible !important;
-            margin:0 !important;
-            padding:0 !important;
-            gap:8px !important;
-            float:none !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            width: 100% !important;
+            max-height: none !important;
+            overflow: visible !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            gap: 8px !important;
+            float: none !important;
         }
         .woocommerce-product-gallery .flex-control-thumbs li {
-            width:72px !important;
-            min-width:72px !important;
-            height:72px !important;
-            float:none !important;
-            margin:0 !important;
+            width: 72px !important;
+            min-width: 72px !important;
+            height: 72px !important;
+            float: none !important;
+            margin: 0 !important;
         }
         .woocommerce-product-gallery .flex-control-thumbs li img {
-            border-radius:10px !important;
-            border:2px solid #EAF0FA !important;
-            opacity:1 !important;
-            width:72px !important;
-            height:72px !important;
-            object-fit:cover !important;
-            cursor:pointer !important;
-            display:block !important;
+            border-radius: 10px !important;
+            border: 2px solid #EAF0FA !important;
+            opacity: 1 !important;
+            width: 72px !important;
+            height: 72px !important;
+            object-fit: cover !important;
+            cursor: pointer !important;
+            display: block !important;
         }
         .woocommerce-product-gallery .flex-control-thumbs li img.flex-active,
         .woocommerce-product-gallery .flex-control-thumbs li img:hover {
-            border-color:#1A3FA0 !important;
-            box-shadow:0 4px 12px rgba(26,63,160,0.2) !important;
+            border-color: #1A3FA0 !important;
+            box-shadow: 0 4px 12px rgba(26,63,160,0.2) !important;
         }
 
         /* Variation selects -> button UI */
