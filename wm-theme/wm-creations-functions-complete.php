@@ -642,11 +642,13 @@ function wm_add_custom_fields_meta_box() {
     add_meta_box( 'wm_custom_fields', 'Customer Input Fields', 'wm_custom_fields_meta_box_html', 'product', 'side', 'default' );
 }
 function wm_custom_fields_meta_box_html( $post ) {
-    $show_name = get_post_meta( $post->ID, '_wm_show_name_field', true );
-    $show_pic  = get_post_meta( $post->ID, '_wm_show_picture_field', true );
+    $show_name   = get_post_meta( $post->ID, '_wm_show_name_field', true );
+    $show_pic    = get_post_meta( $post->ID, '_wm_show_picture_field', true );
+    $show_detail = get_post_meta( $post->ID, '_wm_show_detail_field', true );
     wp_nonce_field( 'wm_save_custom_fields', 'wm_custom_fields_nonce' );
     echo '<label style="display:block; margin-bottom:8px;"><input type="checkbox" name="wm_show_name_field" value="yes" ' . checked( $show_name, 'yes', false ) . '> "Type Your Name" box dikhayein</label>';
-    echo '<label style="display:block;"><input type="checkbox" name="wm_show_picture_field" value="yes" ' . checked( $show_pic, 'yes', false ) . '> "Upload Picture" box dikhayein</label>';
+    echo '<label style="display:block; margin-bottom:8px;"><input type="checkbox" name="wm_show_picture_field" value="yes" ' . checked( $show_pic, 'yes', false ) . '> "Upload Picture" box dikhayein</label>';
+    echo '<label style="display:block;"><input type="checkbox" name="wm_show_detail_field" value="yes" ' . checked( $show_detail, 'yes', false ) . '> "More Detail" bada text box dikhayein</label>';
 }
 add_action( 'save_post', 'wm_save_custom_fields_meta_box' );
 function wm_save_custom_fields_meta_box( $post_id ) {
@@ -655,6 +657,7 @@ function wm_save_custom_fields_meta_box( $post_id ) {
     }
     update_post_meta( $post_id, '_wm_show_name_field', isset( $_POST['wm_show_name_field'] ) ? 'yes' : '' );
     update_post_meta( $post_id, '_wm_show_picture_field', isset( $_POST['wm_show_picture_field'] ) ? 'yes' : '' );
+    update_post_meta( $post_id, '_wm_show_detail_field', isset( $_POST['wm_show_detail_field'] ) ? 'yes' : '' );
 }
 
 // Frontend custom fields: variable = before variations; simple = before ATC
@@ -666,10 +669,11 @@ function wm_render_custom_fields_markup() {
         return;
     }
 
-    $show_name = get_post_meta( $product->get_id(), '_wm_show_name_field', true );
-    $show_pic  = get_post_meta( $product->get_id(), '_wm_show_picture_field', true );
+    $show_name   = get_post_meta( $product->get_id(), '_wm_show_name_field', true );
+    $show_pic    = get_post_meta( $product->get_id(), '_wm_show_picture_field', true );
+    $show_detail = get_post_meta( $product->get_id(), '_wm_show_detail_field', true );
 
-    if ( ! $show_name && ! $show_pic ) {
+    if ( ! $show_name && ! $show_pic && ! $show_detail ) {
         return;
     }
 
@@ -689,6 +693,12 @@ function wm_render_custom_fields_markup() {
                 <span class="wm-upload-filename">No file chosen</span>
               </div>
               <p class="wm-field-note">Agar pictures ek se zyada hain, to kindly WhatsApp kar dijiye — <a href="https://wa.me/923337888820" target="_blank">0333-7888820</a></p>';
+    }
+
+    if ( $show_detail ) {
+        echo '<label class="wm-field-label" for="wm_custom_detail">More Detail Likhein (Optional)</label>
+              <textarea name="wm_custom_detail" id="wm_custom_detail" class="wm-field-input wm-field-textarea" rows="6" placeholder="Agar koi extra / multiple detail likhni ho to yahan likhein..."></textarea>
+              <p class="wm-field-note">Yahan aap design instructions, multiple names, colors, ya koi bhi extra detail likh sakte hain.</p>';
     }
 
     if ( has_term( 'customized-products', 'product_cat', $product->get_id() ) ) {
@@ -742,11 +752,15 @@ function wm_validate_custom_fields( $passed, $product_id ) {
     return $passed;
 }
 
-// Cart mein Naam + Picture data save karna
+// Cart mein Naam + Picture + More Detail data save karna
 add_filter( 'woocommerce_add_cart_item_data', 'wm_add_custom_fields_to_cart', 10, 2 );
 function wm_add_custom_fields_to_cart( $cart_item_data, $product_id ) {
     if ( ! empty( $_POST['wm_custom_name'] ) ) {
         $cart_item_data['wm_custom_name'] = sanitize_text_field( $_POST['wm_custom_name'] );
+    }
+
+    if ( ! empty( $_POST['wm_custom_detail'] ) ) {
+        $cart_item_data['wm_custom_detail'] = sanitize_textarea_field( wp_unslash( $_POST['wm_custom_detail'] ) );
     }
 
     if ( ! empty( $_FILES['wm_custom_picture']['name'] ) ) {
@@ -761,7 +775,7 @@ function wm_add_custom_fields_to_cart( $cart_item_data, $product_id ) {
         }
     }
 
-    if ( isset( $cart_item_data['wm_custom_name'] ) || isset( $cart_item_data['wm_custom_picture'] ) ) {
+    if ( isset( $cart_item_data['wm_custom_name'] ) || isset( $cart_item_data['wm_custom_picture'] ) || isset( $cart_item_data['wm_custom_detail'] ) ) {
         $cart_item_data['unique_key'] = md5( microtime() . wp_rand() );
     }
 
@@ -783,6 +797,12 @@ function wm_display_custom_fields_in_cart( $item_data, $cart_item ) {
             'value' => '<a href="' . esc_url( $cart_item['wm_custom_picture'] ) . '" target="_blank">View Image</a>',
         );
     }
+    if ( ! empty( $cart_item['wm_custom_detail'] ) ) {
+        $item_data[] = array(
+            'name'  => 'More Detail',
+            'value' => nl2br( esc_html( $cart_item['wm_custom_detail'] ) ),
+        );
+    }
     return $item_data;
 }
 
@@ -794,6 +814,9 @@ function wm_save_custom_fields_to_order( $item, $cart_item_key, $values, $order 
     }
     if ( isset( $values['wm_custom_picture'] ) ) {
         $item->add_meta_data( 'Uploaded Picture', $values['wm_custom_picture'] );
+    }
+    if ( ! empty( $values['wm_custom_detail'] ) ) {
+        $item->add_meta_data( 'More Detail', $values['wm_custom_detail'] );
     }
     if ( isset( $values['wm_box_label'] ) ) {
         $item->add_meta_data( 'Box/Packaging', $values['wm_box_label'] );
@@ -1254,6 +1277,14 @@ function wm_product_page_css() {
         .wm-field-label { display:block; font-size:13px; font-weight:700; color:#1A3FA0; margin:0 0 6px; }
         .wm-field-input { width:100%; padding:11px 14px; border:1px solid #dde3ee; border-radius:8px; font-size:14px; margin-bottom:14px; box-sizing:border-box; background:#fff; }
         .wm-field-input:last-of-type { margin-bottom:0; }
+        .wm-field-textarea {
+            min-height: 140px;
+            height: 140px;
+            resize: vertical;
+            line-height: 1.5;
+            font-family: inherit;
+            margin-bottom: 8px;
+        }
         .wm-field-note { font-size:12px; color:#8A5B00; margin:6px 0 0; background:#FFF9EE; padding:8px 12px; border-radius:8px; border:1px solid #F5E3BE; }
         .wm-field-note a { color:#1A3FA0; font-weight:700; }
 
@@ -2857,6 +2888,14 @@ function wm_product_redesign_assets() {
             font-size:15px;
             font-weight:800;
             color:#1A3FA0;
+        }
+        .wm-custom-fields-v2 .wm-field-textarea {
+            min-height: 150px;
+            height: 150px;
+            resize: vertical;
+            line-height: 1.55;
+            font-family: inherit;
+            margin-bottom: 8px;
         }
         .wm-upload-wrap {
             display:flex;
