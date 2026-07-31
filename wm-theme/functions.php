@@ -2568,82 +2568,129 @@ function wm_product_redesign_assets() {
             padding:10px 12px;
         }
 
-        /* ATC + Buy Now + WhatsApp */
-        .woocommerce div.product form.cart {
-            display:flex !important;
-            flex-wrap:wrap !important;
-            align-items:stretch !important;
-            gap:12px !important;
+        /* Purchase actions: dedicated row so ATC / Buy Now / WhatsApp never overlap */
+        .woocommerce div.product form.cart .quantity {
+            float: none !important;
+            position: static !important;
+            display: block !important;
+            width: 100% !important;
+            max-width: 140px !important;
+            margin: 4px 0 14px !important;
+            clear: both !important;
         }
+        .woocommerce div.product form.cart .quantity .qty {
+            width: 100% !important;
+            min-height: 48px !important;
+            border-radius: 12px !important;
+            border: 1.5px solid #DCE5F5 !important;
+            text-align: center !important;
+            font-weight: 700 !important;
+        }
+        .wm-purchase-actions {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 12px !important;
+            width: 100% !important;
+            margin: 0 0 8px !important;
+            clear: both !important;
+            float: none !important;
+            position: relative !important;
+            z-index: 2 !important;
+        }
+        .wm-purchase-actions .single_add_to_cart_button,
+        .wm-purchase-actions .button,
+        .wm-purchase-actions .wm-buy-now-btn,
+        .wm-purchase-actions .wm-order-whatsapp-btn {
+            float: none !important;
+            position: static !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            box-sizing: border-box !important;
+            min-height: 54px !important;
+            line-height: 1.2 !important;
+        }
+        .wm-purchase-actions .single_add_to_cart_button,
+        .wm-purchase-actions .button {
+            grid-column: 1 !important;
+            background: linear-gradient(135deg,#1A3FA0,#2B54C4) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 14px !important;
+            font-family: "Plus Jakarta Sans", sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 15px !important;
+            letter-spacing: 0.2px;
+            box-shadow: 0 10px 22px rgba(26,63,160,0.28) !important;
+        }
+        .wm-purchase-actions .wm-buy-now-btn {
+            grid-column: 2 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #fff !important;
+            color: #1A3FA0 !important;
+            border: 2px solid #1A3FA0 !important;
+            border-radius: 14px !important;
+            font-family: "Plus Jakarta Sans", sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 15px !important;
+            text-decoration: none !important;
+            box-shadow: 0 6px 16px rgba(26,63,160,0.08);
+        }
+        .wm-purchase-actions .wm-buy-now-btn:hover {
+            background: #1A3FA0 !important;
+            color: #fff !important;
+        }
+        .wm-purchase-actions .wm-order-whatsapp-btn {
+            grid-column: 1 / -1 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            background: linear-gradient(135deg,#25D366,#1EBE57) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 14px !important;
+            font-family: "Plus Jakarta Sans", sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 15px !important;
+            text-decoration: none !important;
+            box-shadow: 0 10px 22px rgba(37,211,102,0.28);
+        }
+        .wm-purchase-actions .wm-order-whatsapp-btn:hover {
+            filter: brightness(0.96);
+            transform: translateY(-1px);
+        }
+
+        /* Fallback if JS wrap not ready yet */
         .woocommerce div.product form.cart .single_add_to_cart_button,
-        .woocommerce div.product form.cart .button {
-            flex:1 1 220px;
-            min-height:52px;
-            background:linear-gradient(135deg,#1A3FA0,#2B54C4) !important;
-            color:#fff !important;
-            border:none !important;
-            border-radius:14px !important;
-            font-family:"Plus Jakarta Sans",sans-serif !important;
-            font-weight:800 !important;
-            font-size:15px !important;
-            letter-spacing:0.2px;
-            box-shadow:0 10px 22px rgba(26,63,160,0.28) !important;
-        }
-        .wm-buy-now-btn {
-            flex:1 1 220px;
-            min-height:52px;
-            display:inline-flex !important;
-            align-items:center;
-            justify-content:center;
-            background:#fff !important;
-            color:#1A3FA0 !important;
-            border:2px solid #1A3FA0 !important;
-            border-radius:14px !important;
-            font-family:"Plus Jakarta Sans",sans-serif !important;
-            font-weight:800 !important;
-            font-size:15px !important;
-            text-decoration:none !important;
-            box-shadow:0 6px 16px rgba(26,63,160,0.08);
-        }
-        .wm-buy-now-btn:hover {
-            background:#1A3FA0 !important;
-            color:#fff !important;
+        .woocommerce div.product form.cart .button.alt,
+        .wm-buy-now-btn,
+        .wm-order-whatsapp-btn {
+            float: none !important;
+            position: static !important;
+            clear: none !important;
         }
         .wm-order-whatsapp-btn {
-            flex:1 1 100%;
-            display:inline-flex !important;
-            align-items:center;
-            justify-content:center;
-            gap:8px;
-            min-height:52px;
-            margin-top:4px;
-            background:linear-gradient(135deg,#25D366,#1EBE57) !important;
-            color:#fff !important;
-            border-radius:14px !important;
-            font-family:"Plus Jakarta Sans",sans-serif !important;
-            font-weight:800 !important;
-            font-size:15px !important;
-            text-decoration:none !important;
-            box-shadow:0 10px 22px rgba(37,211,102,0.28);
-        }
-        .wm-order-whatsapp-btn:hover {
-            filter:brightness(0.96);
-            transform:translateY(-1px);
+            display: flex !important;
+            width: 100% !important;
+            clear: both !important;
+            margin: 12px 0 0 !important;
+            box-sizing: border-box !important;
         }
 
-        /* Extra plugin WhatsApp hide on product */
-        body.single-product .nta-woo-products-button {
-            display:none !important;
-        }
-
-        /* ATC + Buy Now no overlap */
-        .woocommerce div.product form.cart .quantity,
-        .woocommerce div.product form.cart .single_add_to_cart_button,
-        .woocommerce div.product form.cart .button,
-        .wm-buy-now-btn {
-            float:none !important;
-            position:static !important;
-            margin:0 !important;
+        /* Extra plugin WhatsApp hide on product summary (keep floating widget) */
+        body.single-product .nta-woo-products-button,
+        body.single-product .woocommerce-variation-add-to-cart .wa__btn_popup,
+        body.single-product .woocommerce-variation-add-to-cart .wa__button,
+        body.single-product form.cart .wa__btn_popup,
+        body.single-product form.cart .wa__stt {
+            display: none !important;
         }
 
         /* Slightly tighter product option spacing */
@@ -2666,12 +2713,18 @@ function wm_product_redesign_assets() {
                 min-width:64px !important;
                 height:64px !important;
             }
-            .woocommerce div.product form.cart .single_add_to_cart_button,
-            .woocommerce div.product form.cart .button,
-            .wm-buy-now-btn,
-            .wm-order-whatsapp-btn {
-                flex:1 1 100%;
-                width:100%;
+            .wm-purchase-actions {
+                grid-template-columns: 1fr !important;
+            }
+            .wm-purchase-actions .single_add_to_cart_button,
+            .wm-purchase-actions .button,
+            .wm-purchase-actions .wm-buy-now-btn,
+            .wm-purchase-actions .wm-order-whatsapp-btn {
+                grid-column: 1 / -1 !important;
+                width: 100% !important;
+            }
+            .woocommerce div.product form.cart .quantity {
+                max-width: 100% !important;
             }
         }
     </style>
@@ -2730,14 +2783,55 @@ function wm_product_redesign_assets() {
 
         buildSwatches();
 
+        // Wrap ATC + Buy Now + WhatsApp into one clean grid (stops overlap)
+        function wmWrapPurchaseActions() {
+            var atcButtons = document.querySelectorAll("form.cart .single_add_to_cart_button");
+            atcButtons.forEach(function (atc) {
+                if (!atc || atc.closest(".wm-purchase-actions")) return;
+                var parent = atc.parentNode;
+                if (!parent) return;
+
+                var buy = null;
+                var wa = null;
+                var node = atc.nextElementSibling;
+                while (node) {
+                    if (node.classList && node.classList.contains("wm-buy-now-btn") && !buy) {
+                        buy = node;
+                    } else if (node.classList && node.classList.contains("wm-order-whatsapp-btn") && !wa) {
+                        wa = node;
+                    }
+                    node = node.nextElementSibling;
+                }
+                if (!buy) {
+                    buy = parent.querySelector(".wm-buy-now-btn");
+                    if (buy && buy.closest(".wm-purchase-actions")) buy = null;
+                }
+                if (!wa) {
+                    wa = parent.querySelector(".wm-order-whatsapp-btn");
+                    if (wa && wa.closest(".wm-purchase-actions")) wa = null;
+                }
+
+                var wrap = document.createElement("div");
+                wrap.className = "wm-purchase-actions";
+                parent.insertBefore(wrap, atc);
+                wrap.appendChild(atc);
+                if (buy) wrap.appendChild(buy);
+                if (wa) wrap.appendChild(wa);
+            });
+        }
+        wmWrapPurchaseActions();
+        setTimeout(wmWrapPurchaseActions, 300);
+        setTimeout(wmWrapPurchaseActions, 1000);
+
         // Rebuild after Woo variation updates
         if (window.jQuery) {
-            jQuery(document.body).on("woocommerce_update_variation_values check_variations", function () {
+            jQuery(document.body).on("woocommerce_update_variation_values check_variations found_variation reset_data", function () {
                 document.querySelectorAll(".wm-swatch-wrap").forEach(function (el) { el.remove(); });
                 document.querySelectorAll("form.variations_form select").forEach(function (select) {
                     select.dataset.wmSwatchReady = "0";
                 });
                 buildSwatches();
+                setTimeout(wmWrapPurchaseActions, 50);
             });
 
             // Gallery safety: keep FlexSlider widths correct + thumb click always switches slide
