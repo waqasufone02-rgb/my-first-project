@@ -1182,25 +1182,27 @@ function wm_product_page_css() {
         }
         .wm-watch-video-btn:hover { background:#1A3FA0; transform:translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,0.32); }
 
+        /* Purchase button layout handled by .wm-purchase-actions in redesign CSS */
         .woocommerce div.product form.cart {
-            display:flex; flex-wrap:wrap; align-items:center; gap:14px;
+            display: block;
         }
         .woocommerce div.product form.cart .button {
             background:linear-gradient(135deg,#1A3FA0,#2B54C4); color:#fff; border:none;
-            padding:14px 32px; border-radius:30px; font-weight:700; font-size:14px;
+            padding:14px 32px; border-radius:14px; font-weight:700; font-size:14px;
             letter-spacing:0.3px; box-shadow:0 6px 16px rgba(26,63,160,0.25);
             transition: all 0.25s ease; text-align:center;
+            float: none !important;
         }
         .woocommerce div.product form.cart .button:hover { transform:translateY(-2px); box-shadow:0 10px 22px rgba(26,63,160,0.35); }
         .wm-buy-now-btn {
             display:inline-flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:#1A3FA0;
-            border:2px solid #1A3FA0; padding:12px 30px; border-radius:30px; font-weight:700;
+            border:2px solid #1A3FA0; padding:12px 30px; border-radius:14px; font-weight:700;
             font-size:14px; text-decoration:none; transition: all 0.25s ease;
+            float: none !important;
         }
         .wm-buy-now-btn:hover { background:#1A3FA0; color:#fff; transform:translateY(-2px); box-shadow:0 10px 22px rgba(26,63,160,0.25); }
 
         @media (max-width:700px) {
-            .woocommerce div.product form.cart .button, .wm-buy-now-btn { width:100%; justify-content:center; text-align:center; }
             .wm-watch-video-btn { bottom:12px; left:12px; padding:9px 16px; font-size:12.5px; }
         }
 
