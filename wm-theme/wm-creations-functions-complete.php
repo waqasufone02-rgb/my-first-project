@@ -3470,33 +3470,75 @@ function wm_cart_checkout_page_css() {
             font-size: 16px !important;
         }
 
-        /* Block cart / checkout primary buttons */
-        body.woocommerce-cart .wc-block-cart__submit-button,
-        body.woocommerce-cart .wc-block-components-button:not(.is-link):not(.is-style-outline),
+        /* Block cart / checkout primary buttons — force over charcoal theme buttons */
+        body.woocommerce-cart,
+        body.woocommerce-checkout {
+            --wc-main: #1A3FA0;
+            --wc-main-rgb: 26, 63, 160;
+            --wc-block-components-button-background: #1A3FA0;
+            --wc-block-components-button-text: #ffffff;
+        }
+        body.woocommerce-cart .wp-block-woocommerce-proceed-to-checkout-block,
+        body.woocommerce-cart .wc-block-cart__submit-container {
+            margin-top: 14px !important;
+        }
         body.woocommerce-cart .wp-block-woocommerce-proceed-to-checkout-block .wc-block-components-button,
+        body.woocommerce-cart .wp-block-woocommerce-proceed-to-checkout-block a,
+        body.woocommerce-cart .wp-block-woocommerce-proceed-to-checkout-block button,
+        body.woocommerce-cart .wc-block-cart__submit-button,
+        body.woocommerce-cart .wc-block-cart__submit-container .wc-block-components-button,
+        body.woocommerce-cart .wc-block-components-button.contained,
+        body.woocommerce-cart button.wc-block-components-button,
+        body.woocommerce-cart a.wc-block-components-button.wc-block-cart__submit-button,
+        body.woocommerce-cart .wp-element-button.wc-block-components-button,
+        body.woocommerce-cart .wc-block-components-button:not(.is-link):not(.outlined):not(.is-style-outline),
         body.woocommerce-checkout .wc-block-components-checkout-place-order-button,
-        body.woocommerce-checkout .wc-block-components-button:not(.is-link):not(.is-style-outline) {
-            background: linear-gradient(135deg, #1A3FA0, #2B54C4) !important;
-            color: #fff !important;
+        body.woocommerce-checkout .wp-element-button.wc-block-components-button,
+        body.woocommerce-checkout button.wc-block-components-button:not(.is-link) {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            min-height: 56px !important;
+            padding: 14px 20px !important;
+            background: linear-gradient(135deg, #1A3FA0 0%, #2B54C4 100%) !important;
+            background-color: #1A3FA0 !important;
+            color: #ffffff !important;
             border: none !important;
             border-radius: 14px !important;
+            box-shadow: 0 12px 28px rgba(26, 63, 160, 0.35) !important;
+            font-family: "Plus Jakarta Sans", sans-serif !important;
+            font-size: 16px !important;
             font-weight: 800 !important;
-            font-size: 15px !important;
-            min-height: 52px !important;
-            box-shadow: 0 10px 22px rgba(26,63,160,0.28) !important;
+            letter-spacing: 0.2px !important;
+            line-height: 1.2 !important;
+            text-transform: none !important;
             text-decoration: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            cursor: pointer !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
         }
+        body.woocommerce-cart .wp-block-woocommerce-proceed-to-checkout-block .wc-block-components-button:hover,
         body.woocommerce-cart .wc-block-cart__submit-button:hover,
-        body.woocommerce-cart .wc-block-components-button:not(.is-link):not(.is-style-outline):hover,
+        body.woocommerce-cart .wc-block-components-button.contained:hover,
+        body.woocommerce-cart button.wc-block-components-button:hover,
+        body.woocommerce-cart .wp-element-button.wc-block-components-button:hover,
         body.woocommerce-checkout .wc-block-components-checkout-place-order-button:hover,
-        body.woocommerce-checkout .wc-block-components-button:not(.is-link):not(.is-style-outline):hover {
-            background: linear-gradient(135deg, #2B54C4, #3A66D6) !important;
-            color: #fff !important;
-            filter: brightness(1.02);
+        body.woocommerce-checkout button.wc-block-components-button:not(.is-link):hover {
+            background: linear-gradient(135deg, #2B54C4 0%, #3A66D6 100%) !important;
+            background-color: #2B54C4 !important;
+            color: #ffffff !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 16px 32px rgba(26, 63, 160, 0.42) !important;
+            filter: none !important;
         }
-        body.woocommerce-cart .wc-block-components-button .wc-block-components-button__text,
-        body.woocommerce-checkout .wc-block-components-button .wc-block-components-button__text {
-            color: #fff !important;
+        body.woocommerce-cart .wc-block-components-button__text,
+        body.woocommerce-cart .wc-block-components-button span,
+        body.woocommerce-checkout .wc-block-components-button__text,
+        body.woocommerce-checkout .wc-block-components-button span {
+            color: #ffffff !important;
+            font-weight: 800 !important;
         }
 
         @media (max-width: 768px) {
@@ -3523,4 +3565,73 @@ function wm_cart_checkout_page_css() {
             }
         }
     </style>';
+}
+
+/* Late CSS + JS so React cart button cannot stay charcoal */
+add_action( 'wp_footer', 'wm_cart_block_checkout_btn_force', 99 );
+function wm_cart_block_checkout_btn_force() {
+    if ( ! is_cart() && ! is_checkout() ) {
+        return;
+    }
+    ?>
+    <style id="wm-cart-checkout-btn-force">
+      body.woocommerce-cart .wp-block-woocommerce-proceed-to-checkout-block .wc-block-components-button,
+      body.woocommerce-cart .wc-block-cart__submit-button,
+      body.woocommerce-cart .wc-block-components-button.contained,
+      body.woocommerce-cart button.wc-block-components-button:not(.is-link),
+      body.woocommerce-cart a.wc-block-components-button:not(.is-link),
+      body.woocommerce-cart .wp-element-button.wc-block-components-button,
+      body.woocommerce-checkout .wc-block-components-checkout-place-order-button,
+      body.woocommerce-checkout button.wc-block-components-button:not(.is-link) {
+        background: linear-gradient(135deg, #1A3FA0 0%, #2B54C4 100%) !important;
+        background-color: #1A3FA0 !important;
+        color: #fff !important;
+        border: 0 !important;
+        border-radius: 14px !important;
+        min-height: 56px !important;
+        width: 100% !important;
+        font-weight: 800 !important;
+        font-size: 16px !important;
+        box-shadow: 0 12px 28px rgba(26,63,160,0.35) !important;
+      }
+      body.woocommerce-cart .wc-block-components-button__text,
+      body.woocommerce-cart .wc-block-components-button span,
+      body.woocommerce-checkout .wc-block-components-button__text {
+        color: #fff !important;
+      }
+    </style>
+    <script>
+    (function () {
+      function styleCheckoutButtons() {
+        var buttons = document.querySelectorAll(
+          ".wp-block-woocommerce-proceed-to-checkout-block .wc-block-components-button, .wc-block-cart__submit-button, .wc-block-components-checkout-place-order-button, .wc-block-cart__submit-container .wc-block-components-button"
+        );
+        buttons.forEach(function (btn) {
+          btn.style.setProperty("background", "linear-gradient(135deg, #1A3FA0 0%, #2B54C4 100%)", "important");
+          btn.style.setProperty("background-color", "#1A3FA0", "important");
+          btn.style.setProperty("color", "#ffffff", "important");
+          btn.style.setProperty("border", "0", "important");
+          btn.style.setProperty("border-radius", "14px", "important");
+          btn.style.setProperty("min-height", "56px", "important");
+          btn.style.setProperty("width", "100%", "important");
+          btn.style.setProperty("font-weight", "800", "important");
+          btn.style.setProperty("font-size", "16px", "important");
+          btn.style.setProperty("box-shadow", "0 12px 28px rgba(26,63,160,0.35)", "important");
+          btn.querySelectorAll("span").forEach(function (span) {
+            span.style.setProperty("color", "#ffffff", "important");
+            span.style.setProperty("font-weight", "800", "important");
+          });
+        });
+      }
+      styleCheckoutButtons();
+      setTimeout(styleCheckoutButtons, 400);
+      setTimeout(styleCheckoutButtons, 1200);
+      setTimeout(styleCheckoutButtons, 2500);
+      if (window.MutationObserver) {
+        var obs = new MutationObserver(function () { styleCheckoutButtons(); });
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+    })();
+    </script>
+    <?php
 }
