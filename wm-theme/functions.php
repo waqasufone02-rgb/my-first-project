@@ -2394,57 +2394,60 @@ function wm_product_redesign_assets() {
             border:1px solid #FFD0A8;
         }
 
-        /* Gallery: rounded main + thumbs LEFT */
-        .woocommerce div.product div.images,
+        /* Gallery: thumbs BELOW main image.
+           CRITICAL: never set width/float/transform on __wrapper or slides —
+           FlexSlider writes those inline (e.g. width:5500px + translate3d).
+           width:auto/100% !important was making thumb clicks show a blank/white main image. */
         .woocommerce-product-gallery {
-            display:flex !important;
-            flex-direction:row !important;
-            align-items:flex-start !important;
-            gap:12px !important;
+            opacity: 1 !important;
         }
-        .woocommerce-product-gallery__wrapper,
         .woocommerce-product-gallery .flex-viewport {
-            flex:1 1 auto !important;
-            order:2 !important;
-            border-radius:18px !important;
-            overflow:hidden !important;
-            box-shadow:0 10px 28px rgba(26,63,160,0.12) !important;
+            margin: 0 0 12px;
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(26,63,160,0.12);
         }
-        .woocommerce-product-gallery__image,
-        .woocommerce-product-gallery__image img,
-        .woocommerce div.product div.images img {
-            border-radius:18px !important;
+        .woocommerce-product-gallery .flex-viewport img,
+        .woocommerce-product-gallery__image img {
+            border-radius: 18px;
         }
-        .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs {
-            order:1 !important;
-            display:flex !important;
-            flex-direction:column !important;
-            width:78px !important;
-            max-height:520px !important;
-            overflow-y:auto !important;
-            margin:0 !important;
-            padding:0 !important;
-            gap:8px !important;
-            float:none !important;
+        .woocommerce-product-gallery ol.flex-control-nav,
+        .woocommerce-product-gallery ol.flex-control-thumbs,
+        .woocommerce-product-gallery .flex-control-thumbs {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            width: 100% !important;
+            max-height: none !important;
+            overflow: visible !important;
+            margin: 12px 0 0 !important;
+            padding: 0 !important;
+            gap: 8px !important;
+            float: none !important;
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
         }
-        .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs li {
-            width:78px !important;
-            float:none !important;
-            margin:0 !important;
+        .woocommerce-product-gallery .flex-control-thumbs li {
+            width: 72px !important;
+            min-width: 72px !important;
+            height: 72px !important;
+            float: none !important;
+            margin: 0 !important;
         }
-        .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs li img {
-            border-radius:10px !important;
-            border:2px solid #EAF0FA !important;
-            opacity:1 !important;
-            width:100% !important;
-            height:78px !important;
-            object-fit:cover !important;
-            cursor:pointer !important;
+        .woocommerce-product-gallery .flex-control-thumbs li img {
+            border-radius: 10px !important;
+            border: 2px solid #EAF0FA !important;
+            opacity: 1 !important;
+            width: 72px !important;
+            height: 72px !important;
+            object-fit: cover !important;
+            cursor: pointer !important;
+            display: block !important;
         }
-        .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs li img.flex-active,
-        .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs li img:hover {
-            border-color:#1A3FA0 !important;
-            box-shadow:0 4px 12px rgba(26,63,160,0.2) !important;
+        .woocommerce-product-gallery .flex-control-thumbs li img.flex-active,
+        .woocommerce-product-gallery .flex-control-thumbs li img:hover {
+            border-color: #1A3FA0 !important;
+            box-shadow: 0 4px 12px rgba(26,63,160,0.2) !important;
         }
 
         /* Variation selects -> button UI */
@@ -2628,15 +2631,40 @@ function wm_product_redesign_assets() {
             transform:translateY(-1px);
         }
 
+        /* Extra plugin WhatsApp hide on product */
+        body.single-product .nta-woo-products-button {
+            display:none !important;
+        }
+
+        /* ATC + Buy Now no overlap */
+        .woocommerce div.product form.cart .quantity,
+        .woocommerce div.product form.cart .single_add_to_cart_button,
+        .woocommerce div.product form.cart .button,
+        .wm-buy-now-btn {
+            float:none !important;
+            position:static !important;
+            margin:0 !important;
+        }
+
+        /* Slightly tighter product option spacing */
+        .wm-custom-fields-v2 { margin:8px 0 !important; padding:12px !important; }
+        .woocommerce div.product form.variations_form table.variations { margin:4px 0 8px !important; }
+        .woocommerce div.product form.variations_form table.variations label { margin:8px 0 6px !important; }
+        .wm-swatch-wrap { gap:6px !important; margin:0 0 6px !important; }
+        .wm-swatch-btn { padding:8px 12px !important; font-size:12.5px !important; }
+        .wm-pack-options, .wm-box-options { margin:8px 0 !important; }
+        .wm-pack-title { margin:0 0 8px !important; }
+        .wm-pack-cards { gap:8px !important; }
+        .wm-pack-card { padding:10px 8px !important; }
+        .wm-freeship-box, .wm-bulk-notice { margin:8px 0 !important; padding:12px 14px !important; }
+
         @media (max-width: 700px) {
             .product_title.entry-title { font-size:22px !important; }
-            .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs {
-                width:60px !important;
-            }
-            .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs li,
-            .woocommerce-product-gallery ol.flex-control-nav.flex-control-thumbs li img {
-                width:60px !important;
-                height:60px !important;
+            .woocommerce-product-gallery .flex-control-thumbs li,
+            .woocommerce-product-gallery .flex-control-thumbs li img {
+                width:64px !important;
+                min-width:64px !important;
+                height:64px !important;
             }
             .woocommerce div.product form.cart .single_add_to_cart_button,
             .woocommerce div.product form.cart .button,
@@ -2711,6 +2739,36 @@ function wm_product_redesign_assets() {
                 });
                 buildSwatches();
             });
+
+            // Gallery safety: keep FlexSlider widths correct + thumb click always switches slide
+            var $gallery = jQuery(".woocommerce-product-gallery");
+            if ($gallery.length) {
+                function wmRefreshGallery() {
+                    $gallery.css("opacity", 1);
+                    var flex = $gallery.data("flexslider");
+                    if (flex) {
+                        if (typeof flex.resize === "function") {
+                            flex.resize();
+                        }
+                        // Clear any leftover bad inline height collapse
+                        if (flex.viewport) {
+                            flex.viewport.css("overflow", "hidden");
+                        }
+                    }
+                }
+                setTimeout(wmRefreshGallery, 200);
+                setTimeout(wmRefreshGallery, 800);
+                jQuery(window).on("load resize", wmRefreshGallery);
+
+                $gallery.on("click", ".flex-control-thumbs li img", function () {
+                    var $thumb = jQuery(this);
+                    var index = $thumb.closest("li").index();
+                    var flex = $gallery.data("flexslider");
+                    if (flex && typeof flex.flexAnimate === "function") {
+                        flex.flexAnimate(index);
+                    }
+                });
+            }
         }
     });
     </script>

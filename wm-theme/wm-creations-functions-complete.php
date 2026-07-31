@@ -2394,33 +2394,21 @@ function wm_product_redesign_assets() {
             border:1px solid #FFD0A8;
         }
 
-        /* Gallery: thumbs below + KEEP WooCommerce slider working */
+        /* Gallery: thumbs BELOW main image.
+           CRITICAL: never set width/float/transform on __wrapper or slides —
+           FlexSlider writes those inline (e.g. width:5500px + translate3d).
+           width:auto/100% !important was making thumb clicks show a blank/white main image. */
         .woocommerce-product-gallery {
             opacity: 1 !important;
         }
-        /* DO NOT force width on wrapper — FlexSlider needs auto width to slide */
-        .woocommerce-product-gallery__wrapper {
-            width: auto !important;
-            max-width: none !important;
-            margin: 0 !important;
-            border-radius: 0 !important;
-            overflow: visible !important;
-            box-shadow: none !important;
-        }
         .woocommerce-product-gallery .flex-viewport {
-            width: 100% !important;
-            margin: 0 0 12px !important;
-            border-radius: 18px !important;
-            overflow: hidden !important;
-            box-shadow: 0 10px 28px rgba(26,63,160,0.12) !important;
+            margin: 0 0 12px;
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(26,63,160,0.12);
         }
-        .woocommerce-product-gallery__image {
-            float: left !important;
-        }
-        .woocommerce-product-gallery__image img,
-        .woocommerce-product-gallery .flex-viewport img {
-            border-radius: 18px !important;
-            display: block !important;
+        .woocommerce-product-gallery .flex-viewport img,
+        .woocommerce-product-gallery__image img {
+            border-radius: 18px;
         }
         .woocommerce-product-gallery ol.flex-control-nav,
         .woocommerce-product-gallery ol.flex-control-thumbs,
@@ -2431,10 +2419,13 @@ function wm_product_redesign_assets() {
             width: 100% !important;
             max-height: none !important;
             overflow: visible !important;
-            margin: 0 !important;
+            margin: 12px 0 0 !important;
             padding: 0 !important;
             gap: 8px !important;
             float: none !important;
+            position: relative !important;
+            left: auto !important;
+            top: auto !important;
         }
         .woocommerce-product-gallery .flex-control-thumbs li {
             width: 72px !important;
@@ -2748,6 +2739,36 @@ function wm_product_redesign_assets() {
                 });
                 buildSwatches();
             });
+
+            // Gallery safety: keep FlexSlider widths correct + thumb click always switches slide
+            var $gallery = jQuery(".woocommerce-product-gallery");
+            if ($gallery.length) {
+                function wmRefreshGallery() {
+                    $gallery.css("opacity", 1);
+                    var flex = $gallery.data("flexslider");
+                    if (flex) {
+                        if (typeof flex.resize === "function") {
+                            flex.resize();
+                        }
+                        // Clear any leftover bad inline height collapse
+                        if (flex.viewport) {
+                            flex.viewport.css("overflow", "hidden");
+                        }
+                    }
+                }
+                setTimeout(wmRefreshGallery, 200);
+                setTimeout(wmRefreshGallery, 800);
+                jQuery(window).on("load resize", wmRefreshGallery);
+
+                $gallery.on("click", ".flex-control-thumbs li img", function () {
+                    var $thumb = jQuery(this);
+                    var index = $thumb.closest("li").index();
+                    var flex = $gallery.data("flexslider");
+                    if (flex && typeof flex.flexAnimate === "function") {
+                        flex.flexAnimate(index);
+                    }
+                });
+            }
         }
     });
     </script>
