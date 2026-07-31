@@ -1,0 +1,245 @@
+<!-- =========================================================
+  WM Creations - TRUST BAR (complete)
+  Custom HTML block:
+
+  OPTION A (easy):
+    HTML tab mein YE POORI FILE paste karo (CSS + HTML + JS)
+
+  OPTION B (alag tabs):
+    - CSS tab  = <style> ... </style> ke ANDAR wala CSS
+    - HTML tab = <div class="wm-trust-bar"> se le kar </script> tak
+========================================================= -->
+
+<style>
+.wm-trust-bar {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin: 8px auto 0 !important;
+  background: linear-gradient(135deg, #F1F5FB, #E8EFFB) !important;
+  border: 1px solid #DCE5F5 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 12px rgba(26, 63, 160, 0.06) !important;
+  box-sizing: border-box !important;
+}
+.wm-trust-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 18px 16px !important;
+  border: 0 !important;
+  border-right: 1px solid #DCE5F5 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  text-decoration: none !important;
+  color: inherit !important;
+  font: inherit !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+.wm-trust-item:last-child { border-right: none !important; }
+.wm-trust-item:hover { background: rgba(79, 168, 224, 0.12) !important; }
+.wm-trust-icon {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #1A3FA0, #4FA8E0) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  box-shadow: 0 4px 10px rgba(26, 63, 160, 0.25) !important;
+}
+.wm-title {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  color: #1A3FA0 !important;
+  line-height: 1.25 !important;
+}
+.wm-desktop-only {
+  margin: 2px 0 0 !important;
+  font-size: 11.5px !important;
+  color: #5A6B8C !important;
+  line-height: 1.3 !important;
+}
+
+.wm-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 30, 70, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 99999;
+}
+.wm-popup-overlay[hidden] { display: none !important; }
+.wm-popup-box {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px 22px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(26, 63, 160, 0.25);
+}
+.wm-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  color: #1A3FA0;
+  cursor: pointer;
+}
+.wm-popup-title {
+  margin: 0 0 12px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1A3FA0;
+}
+.wm-popup-body {
+  font-size: 14px;
+  color: #3A4A6B;
+  line-height: 1.6;
+}
+.wm-popup-body p { margin: 0 0 12px; }
+.wm-popup-body ul { margin: 0 0 12px; padding-left: 18px; }
+.wm-popup-body li { margin-bottom: 6px; }
+.wm-popup-note {
+  background: #FFF4E5;
+  border-left: 4px solid #F5A623;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 12px 0;
+  color: #5A3E00;
+}
+
+@media (max-width: 700px) {
+  .wm-trust-bar {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  .wm-trust-item {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 6px !important;
+    padding: 12px 6px !important;
+  }
+  .wm-trust-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    font-size: 15px !important;
+  }
+  .wm-title {
+    font-size: 10px !important;
+    white-space: normal !important;
+  }
+  .wm-desktop-only { display: none !important; }
+}
+</style>
+
+<div class="wm-trust-bar">
+  <button type="button" class="wm-trust-item" data-wm-popup="cod">
+    <div class="wm-trust-icon">💵</div>
+    <div>
+      <p class="wm-title">Cash on Delivery</p>
+      <p class="wm-desktop-only">Rs 2000+ Order Par</p>
+    </div>
+  </button>
+
+  <a href="https://wa.me/923337888820" class="wm-trust-item" target="_blank" rel="noopener">
+    <div class="wm-trust-icon">📱</div>
+    <div>
+      <p class="wm-title">WhatsApp Order</p>
+      <p class="wm-desktop-only">+92 333 7888820</p>
+    </div>
+  </a>
+
+  <button type="button" class="wm-trust-item" data-wm-popup="return">
+    <div class="wm-trust-icon">🔄</div>
+    <div>
+      <p class="wm-title">Easy Return</p>
+      <p class="wm-desktop-only">Aasan Process</p>
+    </div>
+  </button>
+</div>
+
+<div class="wm-popup-overlay" id="wm-popup-cod" hidden>
+  <div class="wm-popup-box">
+    <button type="button" class="wm-popup-close" data-wm-close>&times;</button>
+    <h3 class="wm-popup-title">Cash on Delivery</h3>
+    <div class="wm-popup-body">
+      <p>WM Creations par aap <strong>Cash on Delivery (COD)</strong> se order kar sakte hain.</p>
+      <ul>
+        <li>Order receive hone par payment karein</li>
+        <li>Rs 2000+ order par COD available</li>
+        <li>Pakistan bhar delivery</li>
+        <li>Order confirm hone ke baad dispatch hota hai</li>
+      </ul>
+      <p class="wm-popup-note"><strong>Important Note:</strong> Jin items par aapki picture ya name print hota hai, unki <strong>delivery charges advance dena lazmi</strong> hai.</p>
+      <p>WhatsApp: <strong>+92 333 7888820</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="wm-popup-overlay" id="wm-popup-return" hidden>
+  <div class="wm-popup-box">
+    <button type="button" class="wm-popup-close" data-wm-close>&times;</button>
+    <h3 class="wm-popup-title">Easy Return</h3>
+    <div class="wm-popup-body">
+      <p>Agar product mein koi issue ho to return process aasan hai.</p>
+      <ul>
+        <li>Product receive hone ke 3 din ke andar inform karein</li>
+        <li>Product unused / original condition mein hona chahiye</li>
+        <li>Custom printed items par return sirf print/damage issue ki soorat mein</li>
+        <li>WhatsApp par order number bhej kar return request karein</li>
+      </ul>
+      <p>Return help: <strong>+92 333 7888820</strong></p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  document.addEventListener("click", function (e) {
+    var openBtn = e.target.closest("[data-wm-popup]");
+    if (openBtn) {
+      e.preventDefault();
+      var popup = document.getElementById("wm-popup-" + openBtn.getAttribute("data-wm-popup"));
+      if (popup) popup.hidden = false;
+      return;
+    }
+    if (e.target.matches("[data-wm-close]")) {
+      var box = e.target.closest(".wm-popup-overlay");
+      if (box) box.hidden = true;
+      return;
+    }
+    if (e.target.classList.contains("wm-popup-overlay")) {
+      e.target.hidden = true;
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      document.querySelectorAll(".wm-popup-overlay:not([hidden])").forEach(function (el) {
+        el.hidden = true;
+      });
+    }
+  });
+})();
+</script>
