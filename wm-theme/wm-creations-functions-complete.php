@@ -3674,3 +3674,648 @@ function wm_cart_block_checkout_btn_force() {
     </script>
     <?php
 }
+
+
+// ============================================================
+// WM Creations - CHECKOUT FORM (PK simplified contact + address)
+// Contact: Mobile # (required) → Email (optional)
+// Address: Full Name, Full Address, Town/City
+// Hidden: Country, State, Postcode, Last name, Address phone, Address 2
+// Works for classic shortcode + Checkout Block
+// ============================================================
+
+add_filter( 'default_checkout_billing_country', 'wm_default_checkout_country_pk' );
+add_filter( 'default_checkout_shipping_country', 'wm_default_checkout_country_pk' );
+function wm_default_checkout_country_pk() {
+    return 'PK';
+}
+
+add_filter( 'woocommerce_default_address_fields', 'wm_simplify_default_address_fields', 9999 );
+function wm_simplify_default_address_fields( $fields ) {
+    if ( isset( $fields['first_name'] ) ) {
+        $fields['first_name']['label']    = 'Full Name';
+        $fields['first_name']['class']    = array( 'form-row-wide' );
+        $fields['first_name']['priority'] = 10;
+        $fields['first_name']['required'] = true;
+    }
+    if ( isset( $fields['last_name'] ) ) {
+        $fields['last_name']['required'] = false;
+        $fields['last_name']['class'][]  = 'wm-hide-field';
+    }
+    if ( isset( $fields['country'] ) ) {
+        $fields['country']['required'] = false;
+        $fields['country']['class'][]  = 'wm-hide-field';
+    }
+    if ( isset( $fields['address_1'] ) ) {
+        $fields['address_1']['label']    = 'Full Address';
+        $fields['address_1']['class']    = array( 'form-row-wide' );
+        $fields['address_1']['priority'] = 20;
+    }
+    if ( isset( $fields['address_2'] ) ) {
+        $fields['address_2']['required'] = false;
+        $fields['address_2']['class'][]  = 'wm-hide-field';
+    }
+    if ( isset( $fields['city'] ) ) {
+        $fields['city']['label']    = 'Town / City';
+        $fields['city']['class']    = array( 'form-row-wide' );
+        $fields['city']['priority'] = 30;
+        $fields['city']['required'] = true;
+    }
+    if ( isset( $fields['state'] ) ) {
+        $fields['state']['required'] = false;
+        $fields['state']['class'][]  = 'wm-hide-field';
+    }
+    if ( isset( $fields['postcode'] ) ) {
+        $fields['postcode']['required'] = false;
+        $fields['postcode']['class'][]  = 'wm-hide-field';
+    }
+    return $fields;
+}
+
+add_filter( 'woocommerce_get_country_locale', 'wm_pk_checkout_locale_fields', 9999 );
+function wm_pk_checkout_locale_fields( $locale ) {
+    $overrides = array(
+        'first_name' => array(
+            'label'    => 'Full Name',
+            'required' => true,
+            'priority' => 10,
+            'class'    => array( 'form-row-wide' ),
+        ),
+        'last_name'  => array(
+            'required' => false,
+            'hidden'   => true,
+        ),
+        'country'    => array(
+            'required' => false,
+            'hidden'   => true,
+        ),
+        'address_1'  => array(
+            'label'    => 'Full Address',
+            'required' => true,
+            'priority' => 20,
+            'class'    => array( 'form-row-wide' ),
+        ),
+        'address_2'  => array(
+            'required' => false,
+            'hidden'   => true,
+        ),
+        'city'       => array(
+            'label'    => 'Town / City',
+            'required' => true,
+            'priority' => 30,
+            'class'    => array( 'form-row-wide' ),
+        ),
+        'state'      => array(
+            'required' => false,
+            'hidden'   => true,
+        ),
+        'postcode'   => array(
+            'required' => false,
+            'hidden'   => true,
+        ),
+        'phone'      => array(
+            'required' => false,
+            'hidden'   => true,
+        ),
+    );
+
+    foreach ( array( 'PK', 'default' ) as $key ) {
+        if ( ! isset( $locale[ $key ] ) || ! is_array( $locale[ $key ] ) ) {
+            $locale[ $key ] = array();
+        }
+        foreach ( $overrides as $field => $data ) {
+            $locale[ $key ][ $field ] = isset( $locale[ $key ][ $field ] ) && is_array( $locale[ $key ][ $field ] )
+                ? array_merge( $locale[ $key ][ $field ], $data )
+                : $data;
+        }
+    }
+
+    return $locale;
+}
+
+add_filter( 'woocommerce_billing_fields', 'wm_customize_billing_fields', 9999 );
+function wm_customize_billing_fields( $fields ) {
+    if ( isset( $fields['billing_phone'] ) ) {
+        $fields['billing_phone']['label']       = 'Mobile #';
+        $fields['billing_phone']['placeholder'] = '03XXXXXXXXX';
+        $fields['billing_phone']['required']    = true;
+        $fields['billing_phone']['priority']    = 5;
+        $fields['billing_phone']['class']       = array( 'form-row-wide' );
+    }
+    if ( isset( $fields['billing_email'] ) ) {
+        $fields['billing_email']['label']       = 'Email address (optional)';
+        $fields['billing_email']['required']    = false;
+        $fields['billing_email']['priority']    = 8;
+        $fields['billing_email']['class']       = array( 'form-row-wide' );
+        $fields['billing_email']['placeholder'] = 'Optional';
+    }
+    if ( isset( $fields['billing_first_name'] ) ) {
+        $fields['billing_first_name']['label']    = 'Full Name';
+        $fields['billing_first_name']['class']    = array( 'form-row-wide' );
+        $fields['billing_first_name']['priority'] = 20;
+    }
+    if ( isset( $fields['billing_last_name'] ) ) {
+        unset( $fields['billing_last_name'] );
+    }
+    if ( isset( $fields['billing_company'] ) ) {
+        unset( $fields['billing_company'] );
+    }
+    if ( isset( $fields['billing_country'] ) ) {
+        $fields['billing_country']['type']     = 'hidden';
+        $fields['billing_country']['default']  = 'PK';
+        $fields['billing_country']['required'] = false;
+        $fields['billing_country']['class']    = array( 'wm-hide-field' );
+    }
+    if ( isset( $fields['billing_address_1'] ) ) {
+        $fields['billing_address_1']['label']    = 'Full Address';
+        $fields['billing_address_1']['class']    = array( 'form-row-wide' );
+        $fields['billing_address_1']['priority'] = 40;
+    }
+    if ( isset( $fields['billing_address_2'] ) ) {
+        unset( $fields['billing_address_2'] );
+    }
+    if ( isset( $fields['billing_city'] ) ) {
+        $fields['billing_city']['label']    = 'Town / City';
+        $fields['billing_city']['class']    = array( 'form-row-wide' );
+        $fields['billing_city']['priority'] = 50;
+    }
+    if ( isset( $fields['billing_state'] ) ) {
+        unset( $fields['billing_state'] );
+    }
+    if ( isset( $fields['billing_postcode'] ) ) {
+        unset( $fields['billing_postcode'] );
+    }
+    return $fields;
+}
+
+add_filter( 'woocommerce_shipping_fields', 'wm_customize_shipping_fields', 9999 );
+function wm_customize_shipping_fields( $fields ) {
+    if ( isset( $fields['shipping_first_name'] ) ) {
+        $fields['shipping_first_name']['label']    = 'Full Name';
+        $fields['shipping_first_name']['class']    = array( 'form-row-wide' );
+        $fields['shipping_first_name']['priority'] = 20;
+    }
+    if ( isset( $fields['shipping_last_name'] ) ) {
+        unset( $fields['shipping_last_name'] );
+    }
+    if ( isset( $fields['shipping_company'] ) ) {
+        unset( $fields['shipping_company'] );
+    }
+    if ( isset( $fields['shipping_country'] ) ) {
+        $fields['shipping_country']['type']     = 'hidden';
+        $fields['shipping_country']['default']  = 'PK';
+        $fields['shipping_country']['required'] = false;
+        $fields['shipping_country']['class']    = array( 'wm-hide-field' );
+    }
+    if ( isset( $fields['shipping_address_1'] ) ) {
+        $fields['shipping_address_1']['label']    = 'Full Address';
+        $fields['shipping_address_1']['class']    = array( 'form-row-wide' );
+        $fields['shipping_address_1']['priority'] = 40;
+    }
+    if ( isset( $fields['shipping_address_2'] ) ) {
+        unset( $fields['shipping_address_2'] );
+    }
+    if ( isset( $fields['shipping_city'] ) ) {
+        $fields['shipping_city']['label']    = 'Town / City';
+        $fields['shipping_city']['class']    = array( 'form-row-wide' );
+        $fields['shipping_city']['priority'] = 50;
+    }
+    if ( isset( $fields['shipping_state'] ) ) {
+        unset( $fields['shipping_state'] );
+    }
+    if ( isset( $fields['shipping_postcode'] ) ) {
+        unset( $fields['shipping_postcode'] );
+    }
+    if ( isset( $fields['shipping_phone'] ) ) {
+        unset( $fields['shipping_phone'] );
+    }
+    return $fields;
+}
+
+add_filter( 'woocommerce_checkout_fields', 'wm_checkout_fields_priority', 9999 );
+function wm_checkout_fields_priority( $fields ) {
+    if ( isset( $fields['billing']['billing_phone'] ) ) {
+        $fields['billing']['billing_phone']['priority'] = 5;
+        $fields['billing']['billing_phone']['label']    = 'Mobile #';
+        $fields['billing']['billing_phone']['required'] = true;
+    }
+    if ( isset( $fields['billing']['billing_email'] ) ) {
+        $fields['billing']['billing_email']['priority'] = 8;
+        $fields['billing']['billing_email']['required'] = false;
+        $fields['billing']['billing_email']['label']    = 'Email address (optional)';
+    }
+    return $fields;
+}
+
+// Blocks: Contact section mein required Mobile # field
+add_action( 'woocommerce_init', 'wm_register_checkout_mobile_field' );
+function wm_register_checkout_mobile_field() {
+    if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+        return;
+    }
+
+    woocommerce_register_additional_checkout_field(
+        array(
+            'id'            => 'wm-creations/mobile',
+            'label'         => 'Mobile #',
+            'optionalLabel' => 'Mobile #',
+            'location'      => 'contact',
+            'type'          => 'text',
+            'required'      => true,
+            'attributes'    => array(
+                'autocomplete' => 'tel',
+                'placeholder'  => '03XXXXXXXXX',
+                'title'        => 'Apna mobile number likhein',
+            ),
+        )
+    );
+}
+
+add_filter( 'woocommerce_checkout_posted_data', 'wm_normalize_checkout_posted_data' );
+function wm_normalize_checkout_posted_data( $data ) {
+    if ( empty( $data['billing_country'] ) ) {
+        $data['billing_country'] = 'PK';
+    }
+    if ( empty( $data['shipping_country'] ) ) {
+        $data['shipping_country'] = 'PK';
+    }
+
+    if ( ! empty( $data['billing_first_name'] ) && empty( $data['billing_last_name'] ) ) {
+        $data['billing_last_name'] = '-';
+    }
+    if ( ! empty( $data['shipping_first_name'] ) && empty( $data['shipping_last_name'] ) ) {
+        $data['shipping_last_name'] = '-';
+    }
+
+    if ( empty( $data['billing_email'] ) && ! empty( $data['billing_phone'] ) ) {
+        $digits = preg_replace( '/\D+/', '', $data['billing_phone'] );
+        if ( $digits ) {
+            $data['billing_email'] = $digits . '@customer.wmshop.pk';
+        }
+    }
+
+    return $data;
+}
+
+add_action( 'woocommerce_checkout_create_order', 'wm_checkout_fill_missing_name_fields', 10, 2 );
+function wm_checkout_fill_missing_name_fields( $order, $data ) {
+    if ( ! $order->get_billing_last_name() && $order->get_billing_first_name() ) {
+        $order->set_billing_last_name( '-' );
+    }
+    if ( ! $order->get_shipping_last_name() && $order->get_shipping_first_name() ) {
+        $order->set_shipping_last_name( '-' );
+    }
+    if ( ! $order->get_billing_country() ) {
+        $order->set_billing_country( 'PK' );
+    }
+    if ( ! $order->get_shipping_country() ) {
+        $order->set_shipping_country( 'PK' );
+    }
+}
+
+add_action( 'woocommerce_store_api_checkout_update_order_from_request', 'wm_blocks_checkout_normalize_order', 20, 2 );
+function wm_blocks_checkout_normalize_order( $order, $request ) {
+    if ( ! $order instanceof WC_Order ) {
+        return;
+    }
+
+    $mobile = '';
+    $meta_keys = array(
+        '_wc_other/wm-creations/mobile',
+        'wm-creations/mobile',
+        '_wm_creations_mobile',
+    );
+    foreach ( $meta_keys as $key ) {
+        $val = $order->get_meta( $key );
+        if ( ! empty( $val ) ) {
+            $mobile = $val;
+            break;
+        }
+    }
+
+    // Fallback: additional fields container used by newer WC versions
+    if ( ! $mobile ) {
+        $other = $order->get_meta( '_wc_other' );
+        if ( is_array( $other ) && ! empty( $other['wm-creations/mobile'] ) ) {
+            $mobile = $other['wm-creations/mobile'];
+        }
+    }
+
+    if ( $mobile ) {
+        $order->set_billing_phone( $mobile );
+        if ( ! $order->get_shipping_phone() ) {
+            $order->set_shipping_phone( $mobile );
+        }
+        $order->update_meta_data( '_wm_customer_mobile', $mobile );
+    }
+
+    if ( ! $order->get_billing_last_name() && $order->get_billing_first_name() ) {
+        $order->set_billing_last_name( '-' );
+    }
+    if ( ! $order->get_shipping_last_name() && $order->get_shipping_first_name() ) {
+        $order->set_shipping_last_name( '-' );
+    }
+    if ( ! $order->get_billing_country() ) {
+        $order->set_billing_country( 'PK' );
+    }
+    if ( ! $order->get_shipping_country() ) {
+        $order->set_shipping_country( 'PK' );
+    }
+
+    $email = $order->get_billing_email();
+    if ( ( ! $email || false !== strpos( $email, '@customer.wmshop.pk' ) ) && $mobile ) {
+        // keep placeholder only when truly empty
+    }
+    if ( ! $email && $mobile ) {
+        $digits = preg_replace( '/\D+/', '', $mobile );
+        if ( $digits ) {
+            $order->set_billing_email( $digits . '@customer.wmshop.pk' );
+        }
+    }
+}
+
+add_action( 'wp_footer', 'wm_checkout_form_redesign_assets', 100 );
+function wm_checkout_form_redesign_assets() {
+    if ( ! is_checkout() ) {
+        return;
+    }
+    ?>
+    <style id="wm-checkout-form-redesign">
+      .wm-hide-field,
+      body.woocommerce-checkout .form-row.wm-hide-field,
+      body.woocommerce-checkout #billing_last_name_field,
+      body.woocommerce-checkout #shipping_last_name_field,
+      body.woocommerce-checkout #billing_company_field,
+      body.woocommerce-checkout #shipping_company_field,
+      body.woocommerce-checkout #billing_address_2_field,
+      body.woocommerce-checkout #shipping_address_2_field,
+      body.woocommerce-checkout #billing_state_field,
+      body.woocommerce-checkout #shipping_state_field,
+      body.woocommerce-checkout #billing_postcode_field,
+      body.woocommerce-checkout #shipping_postcode_field,
+      body.woocommerce-checkout #billing_country_field,
+      body.woocommerce-checkout #shipping_country_field {
+        display: none !important;
+      }
+
+      /* Classic: full-width rows */
+      body.woocommerce-checkout #billing_first_name_field,
+      body.woocommerce-checkout #shipping_first_name_field,
+      body.woocommerce-checkout #billing_address_1_field,
+      body.woocommerce-checkout #shipping_address_1_field,
+      body.woocommerce-checkout #billing_city_field,
+      body.woocommerce-checkout #shipping_city_field,
+      body.woocommerce-checkout #billing_phone_field,
+      body.woocommerce-checkout #billing_email_field {
+        width: 100% !important;
+        float: none !important;
+        clear: both !important;
+      }
+
+      /* Blocks: hide unused address fields (shipping + billing) */
+      body.woocommerce-checkout .wc-block-components-address-form__country,
+      body.woocommerce-checkout .wc-block-components-address-form__state,
+      body.woocommerce-checkout .wc-block-components-address-form__postcode,
+      body.woocommerce-checkout .wc-block-components-address-form__last-name,
+      body.woocommerce-checkout .wc-block-components-address-form__last_name,
+      body.woocommerce-checkout .wc-block-components-address-form__phone,
+      body.woocommerce-checkout .wc-block-components-address-form__address_2,
+      body.woocommerce-checkout .wc-block-components-address-form__address-2,
+      body.woocommerce-checkout .wc-block-components-address-form__company,
+      body.woocommerce-checkout .wc-block-components-address-form .wc-block-components-address-form__address_2-toggle,
+      body.woocommerce-checkout button.wc-block-components-address-form__address_2-toggle,
+      body.woocommerce-checkout .wc-block-components-address-form__address_2-toggle {
+        display: none !important;
+      }
+
+      body.woocommerce-checkout .wc-block-components-address-form__first-name,
+      body.woocommerce-checkout .wc-block-components-address-form__first_name,
+      body.woocommerce-checkout .wc-block-components-address-form__address_1,
+      body.woocommerce-checkout .wc-block-components-address-form__address-1,
+      body.woocommerce-checkout .wc-block-components-address-form__city {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 1 1 100% !important;
+      }
+
+      body.woocommerce-checkout .wc-block-components-checkout-step__heading,
+      body.woocommerce-checkout .wc-block-components-checkout-step__title {
+        color: #1A3FA0 !important;
+        font-family: "Plus Jakarta Sans", sans-serif !important;
+        font-weight: 800 !important;
+      }
+    </style>
+    <script>
+    (function () {
+      function setLabel(root, selectors, text) {
+        selectors.forEach(function (sel) {
+          root.querySelectorAll(sel).forEach(function (el) {
+            var label = el.querySelector("label, .wc-block-components-text-input label, span.wc-block-components-text-input__label");
+            if (label && label.childNodes.length) {
+              // Keep required asterisk span if present
+              var star = label.querySelector(".required, .wc-block-components-required-asterisk, abbr");
+              var starHtml = star ? star.outerHTML : "";
+              label.innerHTML = text + (starHtml ? " " + starHtml : "");
+            } else if (label) {
+              label.textContent = text;
+            }
+            var floating = el.querySelector(".wc-blocks-components-select__label, .wc-block-components-combobox-control__label");
+            if (floating) floating.textContent = text;
+          });
+        });
+      }
+
+      function hideAddressExtras(root) {
+        var hideSelectors = [
+          ".wc-block-components-address-form__country",
+          ".wc-block-components-address-form__state",
+          ".wc-block-components-address-form__postcode",
+          ".wc-block-components-address-form__last-name",
+          ".wc-block-components-address-form__last_name",
+          ".wc-block-components-address-form__phone",
+          ".wc-block-components-address-form__address_2",
+          ".wc-block-components-address-form__address-2",
+          ".wc-block-components-address-form__company",
+          ".wc-block-components-address-form__address_2-toggle",
+          "button.wc-block-components-address-form__address_2-toggle"
+        ];
+        hideSelectors.forEach(function (sel) {
+          root.querySelectorAll(sel).forEach(function (el) {
+            el.style.setProperty("display", "none", "important");
+          });
+        });
+      }
+
+      function widenFields(root) {
+        [
+          ".wc-block-components-address-form__first-name",
+          ".wc-block-components-address-form__first_name",
+          ".wc-block-components-address-form__address_1",
+          ".wc-block-components-address-form__address-1",
+          ".wc-block-components-address-form__city"
+        ].forEach(function (sel) {
+          root.querySelectorAll(sel).forEach(function (el) {
+            el.style.setProperty("width", "100%", "important");
+            el.style.setProperty("max-width", "100%", "important");
+            el.style.setProperty("flex", "1 1 100%", "important");
+          });
+        });
+      }
+
+      function tuneContact(root) {
+        // Email optional label
+        root.querySelectorAll("#email, input[type='email']#email, .wc-block-components-text-input--email").forEach(function (inputWrap) {
+          var wrap = inputWrap.classList && inputWrap.classList.contains("wc-block-components-text-input")
+            ? inputWrap
+            : (inputWrap.closest(".wc-block-components-text-input") || inputWrap.parentElement);
+          if (!wrap) return;
+          var label = wrap.querySelector("label");
+          if (label) label.textContent = "Email address (optional)";
+          var input = wrap.querySelector("input");
+          if (input) {
+            input.removeAttribute("required");
+            input.setAttribute("aria-required", "false");
+            input.placeholder = "Optional";
+          }
+        });
+
+        // Move Mobile field above Email inside contact step
+        var contactStep = root.querySelector(".wp-block-woocommerce-checkout-contact-information-block, .wc-block-checkout__contact-fields, #contact-fields");
+        if (!contactStep) {
+          // fallback: first checkout step that contains email
+          root.querySelectorAll(".wc-block-components-checkout-step").forEach(function (step) {
+            if (!contactStep && step.querySelector("input#email, input[type='email']")) {
+              contactStep = step;
+            }
+          });
+        }
+        if (!contactStep) return;
+
+        var emailWrap = contactStep.querySelector(".wc-block-components-text-input--email, #email") ;
+        if (emailWrap && emailWrap.id === "email") {
+          emailWrap = emailWrap.closest(".wc-block-components-text-input") || emailWrap.parentElement;
+        }
+        var mobileWrap = null;
+        contactStep.querySelectorAll(".wc-block-components-text-input, .wc-block-components-checkbox").forEach(function (el) {
+          var lab = (el.querySelector("label") || {}).textContent || "";
+          var id = (el.querySelector("input") || {}).id || "";
+          if (/mobile/i.test(lab) || /wm-creations\/mobile|wm-creations-mobile/i.test(id)) {
+            mobileWrap = el;
+          }
+        });
+        if (mobileWrap && emailWrap && mobileWrap !== emailWrap && mobileWrap.compareDocumentPosition(emailWrap) & Node.DOCUMENT_POSITION_FOLLOWING) {
+          // mobile already above email
+        } else if (mobileWrap && emailWrap && emailWrap.parentNode) {
+          emailWrap.parentNode.insertBefore(mobileWrap, emailWrap);
+        }
+      }
+
+      function fillHiddenLastName(root) {
+        root.querySelectorAll('input[id*="last-name"], input[id*="last_name"], input[autocomplete="family-name"]').forEach(function (input) {
+          if (!input.value) {
+            input.value = "-";
+            input.dispatchEvent(new Event("input", { bubbles: true }));
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      }
+
+      function ensureCountryPK(root) {
+        root.querySelectorAll('select[id*="country"], input[id*="country"]').forEach(function (el) {
+          if (!el.value) {
+            el.value = "PK";
+            el.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      }
+
+      function ensureEmailOptionalFallback() {
+        var emailInput = document.querySelector(".wc-block-checkout input#email, form.checkout input#billing_email, input#email");
+        if (!emailInput) return;
+        if (emailInput.value && emailInput.value.trim()) return;
+
+        var mobileInput = null;
+        document.querySelectorAll(".wc-block-checkout input, form.checkout input").forEach(function (input) {
+          var lab = "";
+          var wrap = input.closest(".wc-block-components-text-input, .form-row, p");
+          if (wrap) {
+            var l = wrap.querySelector("label");
+            lab = l ? l.textContent : "";
+          }
+          if (/mobile/i.test(lab) || /billing_phone|wm-creations/.test(input.id || "") || input.autocomplete === "tel") {
+            mobileInput = input;
+          }
+        });
+        var phone = mobileInput && mobileInput.value ? mobileInput.value.replace(/\D+/g, "") : "";
+        if (phone) {
+          emailInput.value = phone + "@customer.wmshop.pk";
+          emailInput.dispatchEvent(new Event("input", { bubbles: true }));
+          emailInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      }
+
+      function redesign() {
+        var root = document;
+        hideAddressExtras(root);
+        widenFields(root);
+        tuneContact(root);
+        setLabel(root, [
+          ".wc-block-components-address-form__first-name",
+          ".wc-block-components-address-form__first_name"
+        ], "Full Name");
+        setLabel(root, [
+          ".wc-block-components-address-form__address_1",
+          ".wc-block-components-address-form__address-1"
+        ], "Full Address");
+        setLabel(root, [".wc-block-components-address-form__city"], "Town / City");
+        fillHiddenLastName(root);
+        ensureCountryPK(root);
+
+        // Classic labels
+        var map = {
+          billing_phone: "Mobile #",
+          billing_email: "Email address (optional)",
+          billing_first_name: "Full Name",
+          shipping_first_name: "Full Name",
+          billing_address_1: "Full Address",
+          shipping_address_1: "Full Address",
+          billing_city: "Town / City",
+          shipping_city: "Town / City"
+        };
+        Object.keys(map).forEach(function (id) {
+          var field = document.getElementById(id + "_field");
+          if (!field) return;
+          var label = field.querySelector("label");
+          if (!label) return;
+          var req = label.querySelector(".required");
+          label.textContent = map[id] + " ";
+          if (req) label.appendChild(req);
+        });
+      }
+
+      redesign();
+      [300, 800, 1500, 3000].forEach(function (t) { setTimeout(redesign, t); });
+
+      if (window.MutationObserver) {
+        var obs = new MutationObserver(function () { redesign(); });
+        obs.observe(document.body, { childList: true, subtree: true });
+      }
+
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest(".wc-block-components-checkout-place-order-button, #place_order");
+        if (btn) {
+          fillHiddenLastName(document);
+          ensureCountryPK(document);
+          ensureEmailOptionalFallback();
+        }
+      }, true);
+
+      document.addEventListener("submit", function () {
+        fillHiddenLastName(document);
+        ensureCountryPK(document);
+        ensureEmailOptionalFallback();
+      }, true);
+    })();
+    </script>
+    <?php
+}
