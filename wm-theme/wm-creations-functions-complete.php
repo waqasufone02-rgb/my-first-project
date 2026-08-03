@@ -3282,6 +3282,17 @@ function wm_cart_checkout_page_css() {
             max-width: 1100px !important;
             margin: 0 auto !important;
             padding: 24px 20px 50px !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        /* GP separate-containers uses 30px padding on mobile + alignwide -30px = page out */
+        body.woocommerce-cart.separate-containers .inside-article,
+        body.woocommerce-checkout.separate-containers .inside-article,
+        body.woocommerce-cart.separate-containers .comments-area,
+        body.woocommerce-checkout.separate-containers .comments-area {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            box-sizing: border-box !important;
         }
         body.woocommerce-cart .entry-header .entry-title,
         body.woocommerce-checkout .entry-header .entry-title {
