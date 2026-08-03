@@ -3670,27 +3670,32 @@ function wm_cart_checkout_page_css() {
 
             /* Cart line: keep price visible, allow text wrap */
             body.woocommerce-cart .wc-block-cart-items,
-            body.woocommerce-cart .wc-block-cart-items__row,
-            body.woocommerce-cart table.wc-block-cart-items,
-            body.woocommerce-cart .wc-block-cart-item__wrap {
+            body.woocommerce-cart table.wc-block-cart-items {
                 width: 100% !important;
                 max-width: 100% !important;
                 box-sizing: border-box !important;
                 table-layout: fixed !important;
             }
             body.woocommerce-cart .wc-block-cart-items__row td,
-            body.woocommerce-cart .wc-block-cart-item__wrap {
-                min-width: 0 !important;
-            }
             body.woocommerce-cart .wc-block-cart-item__image,
             body.woocommerce-cart .wc-block-cart-item__product,
             body.woocommerce-cart .wc-block-cart-item__total {
                 min-width: 0 !important;
                 max-width: 100% !important;
+                box-sizing: border-box !important;
+                vertical-align: top !important;
+            }
+            body.woocommerce-cart .wc-block-cart-item__image {
+                width: 64px !important;
+            }
+            body.woocommerce-cart .wc-block-cart-item__product {
+                width: auto !important;
             }
             body.woocommerce-cart .wc-block-cart-item__total {
+                width: 28% !important;
                 text-align: right !important;
                 white-space: nowrap !important;
+                padding-right: 4px !important;
             }
             body.woocommerce-cart .wc-block-components-product-name,
             body.woocommerce-cart .wc-block-components-product-details,
@@ -3703,6 +3708,11 @@ function wm_cart_checkout_page_css() {
                 width: 56px !important;
                 height: 56px !important;
                 max-width: 56px !important;
+            }
+            body.woocommerce-cart .wc-block-components-product-price,
+            body.woocommerce-cart .wc-block-components-product-price__value,
+            body.woocommerce-cart .price {
+                white-space: nowrap !important;
             }
 
             /* Totals rows: label left, amount fully visible right */
