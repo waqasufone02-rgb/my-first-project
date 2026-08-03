@@ -3531,9 +3531,7 @@ function wm_cart_checkout_page_css() {
         body.woocommerce-cart a.wc-block-components-button.wc-block-cart__submit-button,
         body.woocommerce-cart .wp-element-button.wc-block-components-button,
         body.woocommerce-cart .wc-block-components-button:not(.is-link):not(.outlined):not(.is-style-outline),
-        body.woocommerce-checkout .wc-block-components-checkout-place-order-button,
-        body.woocommerce-checkout .wp-element-button.wc-block-components-button,
-        body.woocommerce-checkout button.wc-block-components-button:not(.is-link) {
+        body.woocommerce-checkout .wc-block-components-checkout-place-order-button {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -3563,8 +3561,7 @@ function wm_cart_checkout_page_css() {
         body.woocommerce-cart .wc-block-components-button.contained:hover,
         body.woocommerce-cart button.wc-block-components-button:hover,
         body.woocommerce-cart .wp-element-button.wc-block-components-button:hover,
-        body.woocommerce-checkout .wc-block-components-checkout-place-order-button:hover,
-        body.woocommerce-checkout button.wc-block-components-button:not(.is-link):hover {
+        body.woocommerce-checkout .wc-block-components-checkout-place-order-button:hover {
             background: linear-gradient(135deg, #2B54C4 0%, #3A66D6 100%) !important;
             background-color: #2B54C4 !important;
             color: #ffffff !important;
@@ -3574,8 +3571,8 @@ function wm_cart_checkout_page_css() {
         }
         body.woocommerce-cart .wc-block-components-button__text,
         body.woocommerce-cart .wc-block-components-button span,
-        body.woocommerce-checkout .wc-block-components-button__text,
-        body.woocommerce-checkout .wc-block-components-button span {
+        body.woocommerce-checkout .wc-block-components-checkout-place-order-button .wc-block-components-button__text,
+        body.woocommerce-checkout .wc-block-components-checkout-place-order-button span {
             color: #ffffff !important;
             font-weight: 800 !important;
         }
@@ -3620,8 +3617,7 @@ function wm_cart_block_checkout_btn_force() {
       body.woocommerce-cart button.wc-block-components-button:not(.is-link),
       body.woocommerce-cart a.wc-block-components-button:not(.is-link),
       body.woocommerce-cart .wp-element-button.wc-block-components-button,
-      body.woocommerce-checkout .wc-block-components-checkout-place-order-button,
-      body.woocommerce-checkout button.wc-block-components-button:not(.is-link) {
+      body.woocommerce-checkout .wc-block-components-checkout-place-order-button {
         background: linear-gradient(135deg, #1A3FA0 0%, #2B54C4 100%) !important;
         background-color: #1A3FA0 !important;
         color: #fff !important;
@@ -3632,18 +3628,38 @@ function wm_cart_block_checkout_btn_force() {
         font-weight: 800 !important;
         font-size: 16px !important;
         box-shadow: 0 12px 28px rgba(26,63,160,0.35) !important;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
       }
       body.woocommerce-cart .wc-block-components-button__text,
       body.woocommerce-cart .wc-block-components-button span,
-      body.woocommerce-checkout .wc-block-components-button__text {
+      body.woocommerce-checkout .wc-block-components-checkout-place-order-button span {
         color: #fff !important;
       }
+      /* Keep Place Order / actions block always visible */
+      body.woocommerce-checkout .wp-block-woocommerce-checkout-actions-block,
+      body.woocommerce-checkout .wc-block-checkout__actions,
+      body.woocommerce-checkout .wc-block-checkout__actions_row {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-height: 60px !important;
+        margin-top: 16px !important;
+      }
     </style>
+    <?php
+    // MutationObserver only on CART — on checkout it can interfere with Place Order.
+    if ( ! is_cart() ) {
+        return;
+    }
+    ?>
     <script>
     (function () {
       function styleCheckoutButtons() {
         var buttons = document.querySelectorAll(
-          ".wp-block-woocommerce-proceed-to-checkout-block .wc-block-components-button, .wc-block-cart__submit-button, .wc-block-components-checkout-place-order-button, .wc-block-cart__submit-container .wc-block-components-button"
+          ".wp-block-woocommerce-proceed-to-checkout-block .wc-block-components-button, .wc-block-cart__submit-button, .wc-block-cart__submit-container .wc-block-components-button"
         );
         buttons.forEach(function (btn) {
           btn.style.setProperty("background", "linear-gradient(135deg, #1A3FA0 0%, #2B54C4 100%)", "important");
@@ -3665,7 +3681,6 @@ function wm_cart_block_checkout_btn_force() {
       styleCheckoutButtons();
       setTimeout(styleCheckoutButtons, 400);
       setTimeout(styleCheckoutButtons, 1200);
-      setTimeout(styleCheckoutButtons, 2500);
       if (window.MutationObserver) {
         var obs = new MutationObserver(function () { styleCheckoutButtons(); });
         obs.observe(document.body, { childList: true, subtree: true });
@@ -3772,7 +3787,19 @@ function wm_pk_checkout_locale_fields( $locale ) {
         ),
     );
 
-    foreach ( array( 'PK', 'default' ) as $key ) {
+    // Apply to every country — otherwise Place Order fails when last_name still required.
+    $countries = array( 'default', 'PK' );
+    if ( function_exists( 'WC' ) && WC()->countries ) {
+        $countries = array_unique(
+            array_merge(
+                $countries,
+                array_keys( WC()->countries->get_allowed_countries() ),
+                array_keys( WC()->countries->get_shipping_countries() )
+            )
+        );
+    }
+
+    foreach ( $countries as $key ) {
         if ( ! isset( $locale[ $key ] ) || ! is_array( $locale[ $key ] ) ) {
             $locale[ $key ] = array();
         }
@@ -3784,6 +3811,23 @@ function wm_pk_checkout_locale_fields( $locale ) {
     }
 
     return $locale;
+}
+
+// Built-in address phone / address line 2: hide (Mobile # is our contact field)
+add_filter( 'default_option_woocommerce_checkout_phone_field', 'wm_checkout_phone_option_hidden' );
+add_filter( 'option_woocommerce_checkout_phone_field', 'wm_checkout_phone_option_hidden' );
+function wm_checkout_phone_option_hidden( $value ) {
+    return 'hidden';
+}
+add_filter( 'default_option_woocommerce_checkout_address_2_field', 'wm_checkout_address2_option_hidden' );
+add_filter( 'option_woocommerce_checkout_address_2_field', 'wm_checkout_address2_option_hidden' );
+function wm_checkout_address2_option_hidden( $value ) {
+    return 'hidden';
+}
+add_filter( 'default_option_woocommerce_checkout_company_field', 'wm_checkout_company_option_hidden' );
+add_filter( 'option_woocommerce_checkout_company_field', 'wm_checkout_company_option_hidden' );
+function wm_checkout_company_option_hidden( $value ) {
+    return 'hidden';
 }
 
 add_filter( 'woocommerce_billing_fields', 'wm_customize_billing_fields', 9999 );
@@ -3975,7 +4019,14 @@ function wm_checkout_fill_missing_name_fields( $order, $data ) {
     }
 }
 
-add_action( 'woocommerce_store_api_checkout_update_order_from_request', 'wm_blocks_checkout_normalize_order', 20, 2 );
+add_action( 'woocommerce_store_api_checkout_update_order_from_request', 'wm_blocks_checkout_normalize_order', 5, 2 );
+add_action( 'woocommerce_store_api_checkout_order_processed', 'wm_blocks_checkout_after_processed', 5, 1 );
+function wm_blocks_checkout_after_processed( $order ) {
+    if ( $order instanceof WC_Order ) {
+        wm_blocks_checkout_normalize_order( $order, null );
+        $order->save();
+    }
+}
 function wm_blocks_checkout_normalize_order( $order, $request ) {
     if ( ! $order instanceof WC_Order ) {
         return;
@@ -4062,7 +4113,7 @@ function wm_checkout_form_redesign_assets() {
         clear: both !important;
       }
 
-      /* Blocks: hide visually only (country stays in data = PK) */
+      /* Blocks: hide visually only — do NOT remove from React tree via JS */
       body.woocommerce-checkout .wc-block-components-address-form__country,
       body.woocommerce-checkout .wc-block-components-address-form__state,
       body.woocommerce-checkout .wc-block-components-address-form__postcode,
@@ -4087,131 +4138,41 @@ function wm_checkout_form_redesign_assets() {
         flex: 1 1 100% !important;
       }
 
+      /* Contact: Mobile above Email via flex order (no DOM move — keeps Place Order working) */
+      body.woocommerce-checkout .wp-block-woocommerce-checkout-contact-information-block .wc-block-components-checkout-step__content,
+      body.woocommerce-checkout .wc-block-checkout__contact-fields {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      body.woocommerce-checkout .wc-block-components-text-input--email,
+      body.woocommerce-checkout .wp-block-woocommerce-checkout-contact-information-block .wc-block-components-text-input:has(input#email) {
+        order: 2 !important;
+      }
+      body.woocommerce-checkout .wp-block-woocommerce-checkout-contact-information-block .wc-block-components-text-input:not(.wc-block-components-text-input--email):has(input:not(#email)) {
+        order: 1 !important;
+      }
+
       body.woocommerce-checkout .wc-block-components-checkout-step__heading,
       body.woocommerce-checkout .wc-block-components-checkout-step__title {
         color: #1A3FA0 !important;
         font-family: "Plus Jakarta Sans", sans-serif !important;
         font-weight: 800 !important;
       }
+
+      body.woocommerce-checkout .wp-block-woocommerce-checkout-actions-block,
+      body.woocommerce-checkout .wc-block-checkout__actions,
+      body.woocommerce-checkout .wc-block-components-checkout-place-order-button {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      body.woocommerce-checkout .wp-block-woocommerce-checkout-actions-block,
+      body.woocommerce-checkout .wc-block-checkout__actions {
+        display: block !important;
+        margin-top: 18px !important;
+        margin-bottom: 24px !important;
+      }
     </style>
-    <script>
-    (function () {
-      var busy = false;
-      var timer = null;
-
-      function setLabelOnce(el, text) {
-        if (!el) return;
-        var label = el.querySelector("label");
-        if (!label) return;
-        if (label.getAttribute("data-wm-label") === text) return;
-        var star = label.querySelector(".required, abbr.required");
-        label.textContent = text + (star ? " " : "");
-        if (star) label.appendChild(star);
-        label.setAttribute("data-wm-label", text);
-      }
-
-      function moveMobileAboveEmail() {
-        var contactStep = document.querySelector(
-          ".wp-block-woocommerce-checkout-contact-information-block, .wc-block-checkout__contact-fields"
-        );
-        if (!contactStep) {
-          document.querySelectorAll(".wc-block-components-checkout-step").forEach(function (step) {
-            if (!contactStep && step.querySelector("input#email")) contactStep = step;
-          });
-        }
-        if (!contactStep || contactStep.getAttribute("data-wm-mobile-moved") === "1") return;
-
-        var emailInput = contactStep.querySelector("input#email");
-        var emailWrap = emailInput ? (emailInput.closest(".wc-block-components-text-input") || emailInput.parentElement) : null;
-        var mobileWrap = null;
-        contactStep.querySelectorAll(".wc-block-components-text-input").forEach(function (el) {
-          var lab = ((el.querySelector("label") || {}).textContent || "");
-          var id = ((el.querySelector("input") || {}).id || "");
-          if (/mobile/i.test(lab) || /wm-creations/i.test(id)) mobileWrap = el;
-        });
-        if (mobileWrap && emailWrap && emailWrap.parentNode && mobileWrap !== emailWrap) {
-          emailWrap.parentNode.insertBefore(mobileWrap, emailWrap);
-          contactStep.setAttribute("data-wm-mobile-moved", "1");
-        }
-      }
-
-      function redesign() {
-        if (busy) return;
-        busy = true;
-        try {
-          // Email optional label (visual)
-          var emailInput = document.querySelector(".wc-block-checkout input#email, form.checkout #billing_email");
-          if (emailInput) {
-            var emailWrap = emailInput.closest(".wc-block-components-text-input, .form-row, p") || emailInput.parentElement;
-            setLabelOnce(emailWrap, "Email address (optional)");
-            emailInput.removeAttribute("required");
-            emailInput.setAttribute("aria-required", "false");
-          }
-
-          moveMobileAboveEmail();
-
-          document.querySelectorAll(
-            ".wc-block-components-address-form__first-name, .wc-block-components-address-form__first_name, #billing_first_name_field, #shipping_first_name_field"
-          ).forEach(function (el) { setLabelOnce(el, "Full Name"); });
-
-          document.querySelectorAll(
-            ".wc-block-components-address-form__address_1, .wc-block-components-address-form__address-1, #billing_address_1_field, #shipping_address_1_field"
-          ).forEach(function (el) { setLabelOnce(el, "Full Address"); });
-
-          document.querySelectorAll(
-            ".wc-block-components-address-form__city, #billing_city_field, #shipping_city_field"
-          ).forEach(function (el) { setLabelOnce(el, "Town / City"); });
-
-          var phoneField = document.getElementById("billing_phone_field");
-          if (phoneField) setLabelOnce(phoneField, "Mobile #");
-        } finally {
-          busy = false;
-        }
-      }
-
-      function schedule() {
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(redesign, 150);
-      }
-
-      function fillBeforeSubmit() {
-        document.querySelectorAll('input[autocomplete="family-name"], input[id*="last-name"], input[id*="last_name"], #billing_last_name, #shipping_last_name').forEach(function (input) {
-          if (!input.value) input.value = "-";
-        });
-        document.querySelectorAll('#billing_country, #shipping_country, select[id*="country"]').forEach(function (el) {
-          if (!el.value) el.value = "PK";
-        });
-
-        var emailInput = document.querySelector(".wc-block-checkout input#email, form.checkout #billing_email, input#email");
-        if (emailInput && !emailInput.value.trim()) {
-          var mobileInput = document.querySelector("#billing_phone, input[autocomplete='tel']");
-          if (!mobileInput) {
-            document.querySelectorAll(".wc-block-checkout input").forEach(function (input) {
-              var wrap = input.closest(".wc-block-components-text-input");
-              var lab = wrap && wrap.querySelector("label") ? wrap.querySelector("label").textContent : "";
-              if (/mobile/i.test(lab)) mobileInput = input;
-            });
-          }
-          var phone = mobileInput && mobileInput.value ? mobileInput.value.replace(/\D+/g, "") : "";
-          if (phone) emailInput.value = phone + "@customer.wmshop.pk";
-        }
-      }
-
-      redesign();
-      [400, 1200, 2500].forEach(function (t) { setTimeout(redesign, t); });
-
-      if (window.MutationObserver) {
-        var obs = new MutationObserver(function () { schedule(); });
-        obs.observe(document.body, { childList: true, subtree: true });
-      }
-
-      document.addEventListener("click", function (e) {
-        if (e.target.closest(".wc-block-components-checkout-place-order-button, #place_order")) {
-          fillBeforeSubmit();
-        }
-      }, true);
-      document.addEventListener("submit", fillBeforeSubmit, true);
-    })();
-    </script>
     <?php
 }
