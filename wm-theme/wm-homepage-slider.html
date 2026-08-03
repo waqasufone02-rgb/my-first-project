@@ -1,0 +1,202 @@
+<!-- ============================================
+  WM Creations - Banner Slider (3:1 ratio)
+  WordPress Custom HTML block mein paste karein.
+
+  IMAGE SIZE (3:1 ratio):
+  - Best:        1200 x 400 px
+  - Sharp:       1500 x 500 px
+  - Retina:      1800 x 600 px
+  - Simple:      1000 x 333 px  (min)
+  - Format: JPG / WebP, ~150–350 KB
+
+  Use:
+  1) Media Library mein 3:1 images upload karein
+  2) Neeche src="..." URLs replace karein
+  3) href links set karein
+  4) Extra slide = .wm-slide block copy
+============================================ -->
+
+<style>
+.wm-slider {
+  --wm-blue: #1A3FA0;
+  --wm-blue-2: #2B54C4;
+  max-width: 1200px;
+  margin: 0 auto 28px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+.wm-slider-frame {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #F1F5FB;
+  box-shadow: 0 10px 28px rgba(26,63,160,0.14);
+  aspect-ratio: 3 / 1; /* exact 3:1 banner */
+  width: 100%;
+}
+.wm-slides {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.wm-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.55s ease, visibility 0.55s ease;
+  display: block;
+  text-decoration: none;
+}
+.wm-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 1;
+}
+.wm-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.wm-slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: var(--wm-blue);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wm-slider-btn:hover { background: #fff; color: var(--wm-blue-2); }
+.wm-slider-prev { left: 12px; }
+.wm-slider-next { right: 12px; }
+.wm-slider-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+.wm-slider-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 0;
+  padding: 0;
+  background: rgba(255,255,255,0.55);
+  cursor: pointer;
+}
+.wm-slider-dot.is-active {
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--wm-blue);
+}
+@media (max-width: 700px) {
+  .wm-slider { padding: 0 14px; margin-bottom: 18px; }
+  .wm-slider-frame {
+    border-radius: 14px;
+    aspect-ratio: 3 / 1; /* mobile pe bhi 3:1 */
+  }
+  .wm-slider-btn { width: 34px; height: 34px; font-size: 18px; }
+  .wm-slider-prev { left: 8px; }
+  .wm-slider-next { right: 8px; }
+  .wm-slider-dots { bottom: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wm-slide { transition: none; }
+}
+</style>
+
+<div class="wm-slider" data-wm-slider data-autoplay="5000">
+  <div class="wm-slider-frame">
+    <div class="wm-slides">
+      <!-- SLIDE 1: Hero -->
+      <a class="wm-slide is-active" href="https://wmshop.pk/shop/">
+        <img src="https://wmshop.pk/wp-content/uploads/2026/07/wm-hero-banner-final.webp" alt="WM Creations" width="1200" height="400" decoding="async">
+      </a>
+
+      <!-- SLIDE 2: 14 August → category -->
+      <a class="wm-slide" href="https://wmshop.pk/product-category/14-august-tshirts/">
+        <img src="https://wmshop.pk/wp-content/uploads/2026/07/14-August-sale-banner.webp" alt="14 August Sale" width="1200" height="400" decoding="async">
+      </a>
+    </div>
+
+    <button type="button" class="wm-slider-btn wm-slider-prev" aria-label="Previous">‹</button>
+    <button type="button" class="wm-slider-btn wm-slider-next" aria-label="Next">›</button>
+    <div class="wm-slider-dots" aria-label="Slider dots"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  function initSlider(root) {
+    var slides = Array.prototype.slice.call(root.querySelectorAll(".wm-slide"));
+    if (!slides.length) return;
+    var dotsWrap = root.querySelector(".wm-slider-dots");
+    var prev = root.querySelector(".wm-slider-prev");
+    var next = root.querySelector(".wm-slider-next");
+    var delay = parseInt(root.getAttribute("data-autoplay") || "5000", 10);
+    var i = Math.max(0, slides.findIndex(function (s) { return s.classList.contains("is-active"); }));
+    var timer = null;
+
+    dotsWrap.innerHTML = "";
+    slides.forEach(function (_, idx) {
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "wm-slider-dot" + (idx === i ? " is-active" : "");
+      dot.setAttribute("aria-label", "Go to slide " + (idx + 1));
+      dot.addEventListener("click", function () { go(idx, true); });
+      dotsWrap.appendChild(dot);
+    });
+
+    function go(n, user) {
+      i = (n + slides.length) % slides.length;
+      slides.forEach(function (s, idx) { s.classList.toggle("is-active", idx === i); });
+      Array.prototype.forEach.call(dotsWrap.children, function (d, idx) {
+        d.classList.toggle("is-active", idx === i);
+      });
+      if (user) restart();
+    }
+
+    function restart() {
+      if (timer) clearInterval(timer);
+      if (delay > 0) timer = setInterval(function () { go(i + 1, false); }, delay);
+    }
+
+    if (prev) prev.addEventListener("click", function () { go(i - 1, true); });
+    if (next) next.addEventListener("click", function () { go(i + 1, true); });
+
+    root.addEventListener("mouseenter", function () { if (timer) clearInterval(timer); });
+    root.addEventListener("mouseleave", restart);
+
+    var startX = 0;
+    root.addEventListener("touchstart", function (e) {
+      startX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    root.addEventListener("touchend", function (e) {
+      var dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) < 40) return;
+      go(i + (dx < 0 ? 1 : -1), true);
+    }, { passive: true });
+
+    restart();
+  }
+
+  document.querySelectorAll("[data-wm-slider]").forEach(initSlider);
+})();
+</script>
